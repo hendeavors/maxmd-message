@@ -1,0 +1,51 @@
+{
+    "name": "endeavors/maxmd-message",
+    "description": "Provide an easy api to integrate with maxmd",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Rodriguez",
+            "email": "adam_rodriguez@bitbucket.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/hendeavors/maxmd-http.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/hendeavors/maxmd-support.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/hendeavors/maxmd-apiauth.git"
+        }
+    ],
+    "require": {
+        "endeavors/maxmd-http": "*",
+        "endeavors/maxmd-apiauth": "*",
+        "endeavors/maxmd-support": "dev-develop as 0.1.0",
+        "endeavors/support-vo": "1.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Endeavors\\MaxMD\\Message\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Endeavors\\MaxMD\\Message\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.2.*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
