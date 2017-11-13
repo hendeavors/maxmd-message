@@ -66,6 +66,17 @@ class MessageDetail implements Contracts\IMessageDetail
         return $attachments;
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id(),
+            'body' => $this->body(),
+            'subject' => $this->subject(),
+            'recipients' => $this->recipients(),
+            'folder' => $this->folder()
+        ];
+    }
+
     public function __get($arg)
     {
         if( method_exists($this, $arg) ) {

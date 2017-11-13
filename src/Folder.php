@@ -36,8 +36,8 @@ class Folder implements IFolder
     {
         $request = [
             "auth" => $this->user(),
-            "folderName" => "INBOX." . $this->get(),
-            "subscribedFolderOnly" => false
+            "rootFolderName" => "INBOX." . $this->get(),
+            "subscribedFolderOnly" => "false"
         ];
 
         $this->response = Client::DirectMessage()->GetFolders($request);
@@ -92,7 +92,7 @@ class Folder implements IFolder
         $request = [
             "auth" => $this->user(),
             "folderName" => "INBOX." . $this->get(),
-            "newfolderName" => "INBOX." . $folder->get()
+            "newFolderName" => "INBOX." . $folder->get()
         ];
         
         $this->response = Client::DirectMessage()->MoveFolder($request);

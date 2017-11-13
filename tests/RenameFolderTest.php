@@ -26,4 +26,17 @@ class RenameFolderTest extends \Orchestra\Testbench\TestCase
 
         $this->assertTrue($response->success);
     }
+
+    public function tearDown()
+    {
+        $folder = Folder::create("Some.FolderThree");
+
+        $folder->Delete();
+
+        $newFolder = Folder::create("Some.FolderTwo");
+
+        $newFolder->Delete();
+
+        parent::tearDown();
+    }
 }
