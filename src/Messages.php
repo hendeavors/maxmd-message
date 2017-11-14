@@ -13,7 +13,11 @@ class Messages implements Contracts\IMessages
 
     private function __construct($response)
     {
-        $this->messages = ModernArray::create($response->messages);
+        if( ! property_exists($response,'messages') ) {
+            $this->messages = ModernArray::create([]);
+        } else {
+            $this->messages = ModernArray::create($response->messages);
+        } 
     }
 
     public static function create($messages)
@@ -24,6 +28,11 @@ class Messages implements Contracts\IMessages
     public function All()
     {
         return $this->messages->get();
+    }
+
+    public function Count()
+    {
+        return count($this->All());
     }
 
     public function Paginate($perPage = 25)

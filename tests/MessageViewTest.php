@@ -126,4 +126,13 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
         
         $this->assertNotNull($message->sender);
     }
+
+    public function testViewingMessagesInfolderWithNoMessages()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+        
+        $folder = Folder::create("Inbox.Spam");
+
+        $message = $folder->Messages()->All();
+    }
 }
