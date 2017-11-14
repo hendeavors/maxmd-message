@@ -38,6 +38,11 @@ class MessageDetail implements Contracts\IMessageDetail
         return $this->message->body;
     }
 
+    public function text()
+    {
+        return strip_tags($this->body);
+    }
+
     public function subject()
     {
         return $this->message->subject;
@@ -120,6 +125,11 @@ class NullableMessageDetail extends MessageDetail
         return '';
     }
     
+    public function text()
+    {
+        return '';
+    }
+
     public function recipients()
     {
         return [];

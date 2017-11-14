@@ -9,6 +9,8 @@ class Messages implements Contracts\IMessages
 {
     protected $messages;
 
+    protected $perPage;
+
     private function __construct($response)
     {
         $this->messages = ModernArray::create($response->messages);
@@ -22,6 +24,15 @@ class Messages implements Contracts\IMessages
     public function All()
     {
         return $this->messages->get();
+    }
+
+    public function Paginate($perPage = 25)
+    {
+        $items = $this->All();
+
+        $paginator = Paginator::create($items, count($items), $perPage);
+
+        return $paginator;
     }
     
     /**
