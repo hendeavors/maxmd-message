@@ -122,7 +122,27 @@ class Folder implements IFolder
             "folderName" => $this->get()
         ];
         
-        return Messages::create($this->response);
+        $this->response = Client::DirectMessage()->GetUnreadMessages($request);
+        
+        return Messages::create($this->ToObject());
+    }
+
+    public function UnreadMessageCount()
+    {
+        $request = [
+            "auth" => $this->user(),
+            "folderName" => $this->get()
+        ];
+        
+        $this->response = Client::DirectMessage()->GetUnreadMessageCount($request);
+
+        $result = $this->ToObject();
+
+        if( ! property_exists($result, 'count') ) {
+            return 0;
+        }
+        
+        return $this->ToObject()->count;
     }
 
     public function ToObject()
