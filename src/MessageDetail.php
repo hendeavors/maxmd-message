@@ -13,6 +13,10 @@ class MessageDetail implements Contracts\IMessageDetail
     {
         $this->message = $message;
 
+        if( ! is_object($message) ) {
+            $this->message = static::null();
+        }
+
         if( null !== $this->message ) {
             $this->markRead();
         }
@@ -94,7 +98,7 @@ class MessageDetail implements Contracts\IMessageDetail
         }
     }
 
-    final protected function markRead()
+    protected function markRead()
     {
         $request = [
             "auth" => $this->user(),
@@ -143,6 +147,16 @@ class NullableMessageDetail extends MessageDetail
     public function recipients()
     {
         return [];
+    }
+
+    public function folder()
+    {
+        return '';
+    }
+
+    final protected function markRead()
+    {
+
     }
 
     public function attachments()
