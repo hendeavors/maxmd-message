@@ -12,12 +12,14 @@ class UnreadMessageCountTest extends \Orchestra\Testbench\TestCase
         parent::setUp();
     }
 
-    public function testCountingMessagesInFolder()
+    public function testCountingMessagesInFolderAfterAll()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
         $folder = Folder::create("Inbox");
 
-        $this->assertTrue(is_numeric($folder->UnreadMessageCount()));
+        $folder->Messages();
+
+        $this->assertEquals(0, $folder->UnreadMessageCount());
     }
 }

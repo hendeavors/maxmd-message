@@ -135,4 +135,39 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
 
         $message = $folder->Messages()->All();
     }
+
+    public function testViewingSentFolder()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+        
+        $folder = Folder::create("Inbox.Sent");
+
+        $messageCount = $folder->Messages()->Count();
+
+        $this->assertTrue($messageCount > 0);
+    }
+
+    public function testViewingSentFolderOfLowerCaseArgument()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+        
+        $folder = Folder::create("inbox.sent");
+
+        $messageCount = $folder->Messages()->Count();
+
+        $this->assertTrue($messageCount > 0);
+    }
+
+    public function testViewingSentFolderOfLowerCaseArgumentSingleWord()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+        
+        $folder = Folder::create("dumb");
+
+        $messageCount = $folder->Messages()->Count();
+
+        $folder = Folder::create("sent");
+        
+        $messageCount = $folder->Messages()->Count();
+    }
 }

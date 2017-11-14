@@ -104,10 +104,22 @@ class Folder implements IFolder
      * for now prefix with "INBOX" to see messages of another folder
      */
     public function Messages()
-    {       
+    {   
+        $folder = strtolower($this->get());
+
+        $fqFolderName = explode('.', $folder);
+
+        $names = [];
+
+        foreach($fqFolderName as $fqName) {
+            $names[] = ucfirst($fqName);
+        }
+
+        $folder = implode('.', $names);
+
         $request = [
             "auth" => $this->user(),
-            "folderName" => $this->get()
+            "folderName" => $folder
         ];
         
         $this->response = Client::DirectMessage()->GetMessages($request);
