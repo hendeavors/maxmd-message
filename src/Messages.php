@@ -24,10 +24,21 @@ class Messages implements Contracts\IMessages
     {
         return new static($messages);
     }
-
+    
+    /**
+     * Creating the array of objects adds a little overhead, but more stability
+     * 
+     * @return array of message details
+     */
     public function All()
     {
-        return $this->messages->get();
+        $messages = [];
+        
+        foreach( $this->messages->get() as $message ) {
+            $messages[] = new MessageDetail($message);
+        }
+
+        return $messages;
     }
 
     public function Count()

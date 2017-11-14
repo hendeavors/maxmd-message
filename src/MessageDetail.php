@@ -23,6 +23,11 @@ class MessageDetail implements Contracts\IMessageDetail
         return new NullableMessageDetail();
     }
 
+    public function uid()
+    {
+        return $this->id;
+    }
+
     public function id()
     {
         return $this->message->uid;
@@ -109,6 +114,11 @@ class MessageDetail implements Contracts\IMessageDetail
 class NullableMessageDetail extends MessageDetail
 {
     public function __construct() {}
+
+    public function uid()
+    {
+        return '';
+    }
 
     public function sender()
     {
