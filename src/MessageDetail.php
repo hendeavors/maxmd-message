@@ -54,7 +54,7 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function subject()
     {
-        return $this->message->subject;
+        return property_exists($this->message, 'subject') ? $this->message->subject : '(no subject)';
     }
 
     public function recipients()
