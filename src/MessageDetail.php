@@ -67,14 +67,81 @@ class MessageDetail implements Contracts\IMessageDetail
         return $this->message->folder;
     }
 
+    protected function receivedDate()
+    {
+        if(is_object($this->message->receivedDate)) {
+            return $this->message->receivedDate;
+        } 
+
+        return new \DateTime($this->message->receivedDate);
+    }
+
     public function receivedAt()
     {
-        return $this->message->receivedDate;
+        return $this->receivedDate()->format("M d");
+    }
+
+    public function receivedTime()
+    {
+        return $this->receivedDate()->format("H:i");
+    }
+
+    public function receivedTimeZoneOffset()
+    {
+        $offset = $this->receivedDate()->getOffset() / 60 / 60;
+
+        return $offset;
+    }
+
+    public function receivedDateOrTime()
+    {
+        if( $this->shouldDisplayReceivedDate()) {
+            return $this->receivedAt();
+        }
+
+        return $this->receivedTime();
+    }
+
+    public function shouldDisplayReceivedDate()
+    {
+        $now = new \DateTime("now");
+
+        $today = $now->format('m/d/y');
+
+        $receivedDate = $this->receivedDate()->format('m/d/y');
+
+        return $receivedDate < $today;
+    }
+
+    public function shouldDisplayReceivedTime()
+    {
+        return ! $this->shouldDisplayReceivedDate();
+    }
+
+    public function sentDate()
+    {
+        if(is_object($this->message->sentDate)) {
+            return $this->message->sentDate;
+        } 
+
+        return new \DateTime($this->message->sentDate);
     }
 
     public function sentAt()
     {
-        return $this->message->sentDate;
+        return $this->sentDate()->format("M d");
+    }
+
+    public function sentTime()
+    {
+        return $this->sentDate()->format("H:i");
+    }
+
+    public function sentTimeZoneOffset()
+    {
+        $offset = $this->sentDate()->getOffset() / 60 / 60;
+
+        return $offset;
     }
 
     public function headers()
@@ -107,7 +174,9 @@ class MessageDetail implements Contracts\IMessageDetail
             'body' => $this->body(),
             'subject' => $this->subject(),
             'recipients' => $this->recipients(),
-            'folder' => $this->folder()
+            'folder' => $this->folder(),
+            'receivedAt' => $this->receivedAt(),
+            'receivedTime' => $this->receivedTime()
         ];
     }
 
