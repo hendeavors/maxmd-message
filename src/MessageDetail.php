@@ -69,7 +69,10 @@ class MessageDetail implements Contracts\IMessageDetail
 
     protected function receivedDate()
     {
-        if(is_object($this->message->receivedDate)) {
+        if( null === $this->message->receivedDate ) {
+            return new \DateTime('now');
+        }
+        elseif(is_object($this->message->receivedDate)) {
             return $this->message->receivedDate;
         } 
 

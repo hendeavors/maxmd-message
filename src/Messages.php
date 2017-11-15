@@ -15,6 +15,8 @@ class Messages implements Contracts\IMessages
     {
         if( ! property_exists($response,'messages') ) {
             $this->messages = ModernArray::create([]);
+        } elseif( is_object($response->messages) ) {
+            $this->messages = ModernArray::create([$response->messages]);
         } else {
             $this->messages = ModernArray::create($response->messages);
         } 
