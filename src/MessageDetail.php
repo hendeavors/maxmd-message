@@ -13,7 +13,7 @@ class MessageDetail implements Contracts\IMessageDetail
     {
         $this->message = $message;
 
-        if( ! is_object($message) ) {
+        if( ! is_object($message) || $message === null ) {
             $this->message = static::null();
         }
 
@@ -65,6 +65,26 @@ class MessageDetail implements Contracts\IMessageDetail
     public function folder()
     {
         return $this->message->folder;
+    }
+
+    public function receivedAt()
+    {
+        return $this->message->receivedDate;
+    }
+
+    public function sentAt()
+    {
+        return $this->message->sentDate;
+    }
+
+    public function headers()
+    {
+        return $this->message->headers;
+    }
+
+    public function replyTo()
+    {
+        return $this->message->replyTo;
     }
 
     public function attachments()
@@ -119,9 +139,14 @@ class NullableMessageDetail extends MessageDetail
 {
     public function __construct() {}
 
+    public function id()
+    {
+        return 0;
+    }
+
     public function uid()
     {
-        return '';
+        return 0;
     }
 
     public function sender()
@@ -150,6 +175,26 @@ class NullableMessageDetail extends MessageDetail
     }
 
     public function folder()
+    {
+        return '';
+    }
+
+    public function receivedAt()
+    {
+        return '';
+    }
+
+    public function sentAt()
+    {
+        return '';
+    }
+
+    public function headers()
+    {
+        return '';
+    }
+
+    public function replyTo()
     {
         return '';
     }

@@ -82,7 +82,7 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
         // assuming the message never gets deleted
         $itemThree = $items->paginate()[2];
 
-        $this->assertEquals(4, $itemThree->uid);
+        $this->assertEquals(9, $itemThree->uid);
 
         $items->next();
 
