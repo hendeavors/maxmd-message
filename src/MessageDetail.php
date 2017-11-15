@@ -102,6 +102,15 @@ class MessageDetail implements Contracts\IMessageDetail
         return $this->receivedTime();
     }
 
+    public function sentOrReceivedAt()
+    {
+        if( strtolower($this->folder) === "inbox.sent" ) {
+            return $this->sentAt() . ' ' . $this->sentTime();
+        }
+        
+        return $this->receivedDateOrTime();
+    }
+
     public function shouldDisplayReceivedDate()
     {
         $now = new \DateTime("now");
@@ -264,6 +273,11 @@ class NullableMessageDetail extends MessageDetail
     }
 
     public function replyTo()
+    {
+        return '';
+    }
+
+    public function sentOrReceivedAt()
     {
         return '';
     }
