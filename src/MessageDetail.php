@@ -111,6 +111,15 @@ class MessageDetail implements Contracts\IMessageDetail
         return $this->receivedDate()->format('Y-m-d H:i:s');
     }
 
+    public function carbonDateTime()
+    {
+        if( strtolower($this->folder) === "inbox.sent" ) {
+            return substr($this->sentDate()->format('Y-m-d H:i:s.u'), 0, -3);
+        }
+        
+        return substr($this->receivedDate()->format('Y-m-d H:i:s.u'), 0, -3);
+    }
+
     public function sentOrReceivedAt()
     {
         if( strtolower($this->folder) === "inbox.sent" ) {
