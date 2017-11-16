@@ -54,7 +54,11 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function subject()
     {
-        return isset($this->message->subject) ? $this->message->subject : '(no subject)';
+        try {
+            return $this->message->subject;
+        } catch(\Exception $ex) {
+            return '(no subject)';
+        }
     }
 
     public function recipients()
