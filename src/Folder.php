@@ -44,6 +44,20 @@ class Folder implements IFolder
 
         return $this;
     }
+
+    public function MoveMessages($uids, IFolder $folder)
+    {
+        $request = [
+            "auth" => $this->user(),
+            "folderName" => "INBOX." . $this->get(),
+            "destFolderName" => "INBOX." . $folder->get(),
+            "uids" => $uids
+        ];
+        
+        $this->response = Client::DirectMessage()->MoveMessagesByUID($request);
+
+        return $this;
+    }
     
     /**
      * @throws Exceptions\InvalidUserException
@@ -64,6 +78,7 @@ class Folder implements IFolder
     
     /**
      * @param closure - allow the developer to perform actions before everything is deleted
+     * @throws Exceptions\InvalidUserException
      */
     public function Delete(\Closure $callBack = null)
     {
