@@ -36,6 +36,8 @@ class MessageDetailReceivedDataTest extends \Orchestra\Testbench\TestCase
         $this->assertNotNull($message->subject);
 
         $this->assertNotNull($message->sentOrReceivedAtDateTime);
+
+        $this->assertNotNull($message->detailDateTime);
     }
 
     public function testDraftBox()
