@@ -4,9 +4,12 @@ namespace Endeavors\MaxMD\Message;
 
 use Endeavors\MaxMD\Support\Client;
 use Endeavors\Support\VO\ModernArray;
+use Endeavors\SqlServer\Moment;
 
 class MessageDetail implements Contracts\IMessageDetail
 {
+    use Moment\DateTimeConversion;
+
     protected $message;
 
     public function __construct($message)
@@ -82,85 +85,12 @@ class MessageDetail implements Contracts\IMessageDetail
 
         return new \DateTime($this->message->receivedDate);
     }
-
-    public function receivedAt()
-    {
-        return $this->receivedDate()->format("M d");
-    }
-
-    public function receivedTime()
-    {
-        return $this->receivedDate()->format("H:i");
-    }
-
-    public function receivedTimeZoneOffset()
-    {
-        $offset = $this->receivedDate()->getOffset() / 60 / 60;
-
-        return $offset;
-    }
-
-    public function receivedDateOrTime()
-    {
-        if( $this->shouldDisplayReceivedDate()) {
-            return $this->receivedAt();
-        }
-
-        return $this->receivedTime();
-    }
-
-    public function sentOrReceivedAtDateTime()
-    {
-        if( strtolower($this->folder) === "inbox.sent" ) {
-            return $this->sentDate()->format('Y-m-d H:i:s');
-        }
-        
-        return $this->receivedDate()->format('Y-m-d H:i:s');
-    }
-
-    public function detailDateTime()
-    {
-        if( strtolower($this->folder) === "inbox.sent" ) {
-            return $this->sentDate()->format('D M Y') . ' at ' . $this->sentDate()->format('H:i:s A');
-        }
-        
-        return $this->receivedDate()->format('D M Y') . ' at ' . $this->receivedDate()->format('H:i:s A');
-    }
-
-    public function carbonDateTime()
-    {
-        if( strtolower($this->folder) === "inbox.sent" ) {
-            return substr($this->sentDate()->format('Y-m-d H:i:s.u'), 0, -3);
-        }
-        
-        return substr($this->receivedDate()->format('Y-m-d H:i:s.u'), 0, -3);
-    }
-
-    public function sentOrReceivedAt()
-    {
-        if( strtolower($this->folder) === "inbox.sent" ) {
-            return $this->sentAt() . ' ' . $this->sentTime();
-        }
-        
-        return $this->receivedDateOrTime();
-    }
-
-    public function shouldDisplayReceivedDate()
-    {
-        $now = new \DateTime("now");
-
-        $today = $now->format('m/d/y');
-
-        $receivedDate = $this->receivedDate()->format('m/d/y');
-
-        return $receivedDate < $today;
-    }
-
-    public function shouldDisplayReceivedTime()
-    {
-        return ! $this->shouldDisplayReceivedDate();
-    }
-
+    
+    /**
+     * The message sent date
+     * 
+     * @return datetime
+     */
     public function sentDate()
     {
         if(is_object($this->message->sentDate)) {
@@ -169,22 +99,44 @@ class MessageDetail implements Contracts\IMessageDetail
 
         return new \DateTime($this->message->sentDate);
     }
-
-    public function sentAt()
+    
+    /**
+     * The offset of the sent date or received date
+     * @todo move the timezone conversion to a separate package for reuse
+     */
+    public function timeZoneOffset()
     {
-        return $this->sentDate()->format("M d");
-    }
+        if( strtolower($this->folder) === "inbox.sent" ) {
+            $offset = $this->sentDate()->getOffset() / 60 / 60;
+        }
 
-    public function sentTime()
-    {
-        return $this->sentDate()->format("H:i");
-    }
-
-    public function sentTimeZoneOffset()
-    {
-        $offset = $this->sentDate()->getOffset() / 60 / 60;
+        $offset = $this->receivedDate()->getOffset() / 60 / 60;
 
         return $offset;
+    }
+    
+    /**
+     * The detail date time
+     */
+    public function detailDateTime()
+    {
+        if( strtolower($this->folder) === "inbox.sent" ) {
+            return $this->sentDate()->format('D M Y') . ' at ' . $this->sentDate()->format('H:i:s A');
+        }
+        
+        return $this->receivedDate()->format('D M Y') . ' at ' . $this->receivedDate()->format('H:i:s A');
+    }
+    
+    /**
+     * A carbon safe datetime.
+     */
+    public function carbonDateTime()
+    {
+        if( strtolower($this->folder) === "inbox.sent" ) {
+            return $this->fromDateTime($this->sentDate());
+        }
+        
+        return $this->fromDateTime($this->receivedDate());
     }
 
     public function headers()
@@ -219,9 +171,7 @@ class MessageDetail implements Contracts\IMessageDetail
             'body' => $this->body(),
             'subject' => $this->subject(),
             'recipients' => $this->recipients(),
-            'folder' => $this->folder(),
-            'receivedAt' => $this->receivedAt(),
-            'receivedTime' => $this->receivedTime()
+            'folder' => $this->folder()
         ];
     }
 
@@ -293,11 +243,6 @@ class NullableMessageDetail extends MessageDetail
         return '';
     }
 
-    public function receivedAt()
-    {
-        return '';
-    }
-
     public function sentAt()
     {
         return '';
@@ -309,11 +254,6 @@ class NullableMessageDetail extends MessageDetail
     }
 
     public function replyTo()
-    {
-        return '';
-    }
-
-    public function sentOrReceivedAt()
     {
         return '';
     }

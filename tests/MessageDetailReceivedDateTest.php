@@ -19,23 +19,15 @@ class MessageDetailReceivedDataTest extends \Orchestra\Testbench\TestCase
         
         $folder = Folder::create("Inbox");
         
-        // freddie has emails in his inbox
+        // assume freddie has emails in his inbox
 
         $message = $folder->Messages()->View(9);
 
-        $this->assertTrue(str_contains($message->receivedAt, "Nov"));
+        $this->assertTrue(is_numeric($message->timeZoneOffset));
 
-        $this->assertTrue(is_numeric($message->receivedTimeZoneOffset));
-
-        $this->assertNotNull($message->receivedTime);
-
-        $this->assertNotNull($message->receivedDateOrTime);
-
-        $this->assertNotNull($message->sentOrReceivedAt);
+        $this->assertNotNull($message->carbonDateTime);
 
         $this->assertNotNull($message->subject);
-
-        $this->assertNotNull($message->sentOrReceivedAtDateTime);
 
         $this->assertNotNull($message->detailDateTime);
     }
@@ -46,22 +38,16 @@ class MessageDetailReceivedDataTest extends \Orchestra\Testbench\TestCase
         
         $folder = Folder::create("Inbox.Drafts");
         
-        // freddie has emails in his inbox
+        // assume freddie has emails in his inbox
 
         $message = $folder->Messages()->View(1);
 
-        $this->assertTrue(str_contains($message->receivedAt, "Nov"));
+        $this->assertTrue(is_numeric($message->timeZoneOffset));
 
-        $this->assertTrue(is_numeric($message->receivedTimeZoneOffset));
-
-        $this->assertNotNull($message->receivedTime);
-
-        $this->assertNotNull($message->receivedDateOrTime);
-
-        $this->assertNotNull($message->sentOrReceivedAt);
+        $this->assertNotNull($message->carbonDateTime);
 
         $this->assertNotNull($message->subject);
 
-        $this->assertNotNull($message->sentOrReceivedAtDateTime);
+        $this->assertNotNull($message->detailDateTime);
     }
 }
