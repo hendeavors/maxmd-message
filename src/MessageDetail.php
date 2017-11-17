@@ -200,9 +200,11 @@ class MessageDetail implements Contracts\IMessageDetail
     public function attachments()
     {
         $attachments = [];
-
-        foreach(ModernArray::create($this->message->attachmentList)->get() as $attachment) {
-            $attachments[] = new Attachment($attachment);
+        
+        if( isset($this->message->attachmentList) ) {
+            foreach(ModernArray::create($this->message->attachmentList)->get() as $attachment) {
+                $attachments[] = new Attachment($attachment);
+            }
         }
 
         $attachments = new Attachments(ModernArray::create($attachments));
