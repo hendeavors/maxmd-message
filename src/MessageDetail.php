@@ -149,6 +149,11 @@ class MessageDetail implements Contracts\IMessageDetail
         return $this->message->replyTo;
     }
 
+    public function hasAttachments()
+    {
+        return $this->attachments->count() > 0;
+    }
+
     public function attachments()
     {
         $attachments = [];

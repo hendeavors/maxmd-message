@@ -25,4 +25,9 @@ class Attachments implements Contracts\IAttachment
     {
         return $this->attachments->get();
     }
+
+    public function count()
+    {
+        return count($this->get());
+    }
 }
