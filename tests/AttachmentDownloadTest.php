@@ -27,6 +27,23 @@ class AttachmentDownloadTest extends \Orchestra\Testbench\TestCase
         $this->assertInstanceOf(Attachments::class, $attachments);
     }
 
+    public function testGettingAttachmentWithoutFilename()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+        
+        $folder = Folder::create("inbox.sent");
+
+        $message = $folder->Messages()->View(7);
+
+        $attachments = $message->attachments();
+
+        $this->assertInstanceOf(Attachments::class, $attachments);
+
+        foreach($attachments->get() as $attachment) {
+            $this->assertNull($attachment->filename());
+        }
+    }
+
     public function testGettingAttachmentsWithoutFilename()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");

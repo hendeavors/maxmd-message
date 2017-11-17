@@ -17,20 +17,24 @@ class Attachment implements Contracts\IAttachment
 
     public function download()
     {
-        $outstream = fopen("php://output",'w');
-        fwrite($outstream, $this->attachment->content);
+        if( $this->hasFilename() ) {
+            $outstream = fopen("php://output",'w');
+            fwrite($outstream, $this->attachment->content);
 
-        header($this->attachment->contentType);
-        header("Cache-Control: no-store, no-cache");
-        header('Content-Disposition: attachment; filename="'. $this->attachment->filename .'"');
-        
-        fclose($outstream);
+            header($this->attachment->contentType);
+            header("Cache-Control: no-store, no-cache");
+            header('Content-Disposition: attachment; filename="'. $this->attachment->filename .'"');
+            
+            fclose($outstream);
 
-        die();
+            die();
+        }
     }
 
     public function filename()
     {
+        $this->checkAttribute('filename');
+
         return $this->attachment->filename;
     }
 
@@ -42,6 +46,18 @@ class Attachment implements Contracts\IAttachment
     public function content()
     {
         return $this->attachment->content;
+    }
+
+    public function hasFilename()
+    {
+        return null !== $this->filename();
+    }
+
+    protected function checkAttribute($attribute)
+    {
+        if( ! property_exists($this->attachment, $attribute) ) {
+            $this->attachment = NullableAttachment::null();
+        }
     }
 }
 
