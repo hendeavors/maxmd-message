@@ -65,7 +65,7 @@ class Messages implements Contracts\IMessages
     {
         foreach($this->All() as $message) {
             if( $message->uid === (int)$id ) {
-                return new MessageDetail($message);
+                return $message;
             }
         }
         
