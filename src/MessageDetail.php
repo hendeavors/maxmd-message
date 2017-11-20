@@ -209,6 +209,11 @@ class NullableMessageDetail extends MessageDetail
 {
     public function __construct() {}
 
+    public static function null()
+    {
+        return null;
+    }
+
     public function id()
     {
         return 0;
