@@ -50,13 +50,13 @@ class Folder implements IFolder
         $fromFolder = $this->get();
 
         if( strtolower($fromFolder) !== "inbox" ) {
-            $fromFolder = "INBOX" . $this->get();
+            $fromFolder = "INBOX." . $this->get();
         }
 
         $toFolder = $folder->get();
 
         if( strtolower($toFolder) !== "inbox" ) {
-            $toFolder = "INBOX" . $this->get();
+            $toFolder = "INBOX." . $folder->get();
         }
 
         $request = [
