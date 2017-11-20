@@ -48,17 +48,19 @@ class Folder implements IFolder
     public function MoveMessages($uids, IFolder $folder)
     {
         $fromFolder = $this->get();
-
-        if( strtolower($fromFolder) !== "inbox" ) {
-            $fromFolder = "INBOX." . $this->get();
+        
+        if( ModernString::create($fromFolder)->toLower() !== "inbox" && false === ModernString::create($fromFolder)->toLower()->position("inbox") ) {
+            // if we do not have the inbox and we do not have a prefix
+            $fromFolder = "Inbox." . $fromFolder;
         }
 
         $toFolder = $folder->get();
 
-        if( strtolower($toFolder) !== "inbox" ) {
-            $toFolder = "INBOX." . $folder->get();
+        if( ModernString::create($toFolder)->toLower() !== "inbox" && false === ModernString::create($toFolder)->toLower()->position("inbox") ) {
+            // if we do not have the inbox and we do not have a prefix
+            $toFolder = "Inbox." . $toFolder;
         }
-
+        
         $request = [
             "auth" => $this->user(),
             "folderName" => $fromFolder,
