@@ -47,10 +47,22 @@ class Folder implements IFolder
 
     public function MoveMessages($uids, IFolder $folder)
     {
+        $fromFolder = $this->get();
+
+        if( strtolower($fromFolder) !== "inbox" ) {
+            $fromFolder = "INBOX" . $this->get();
+        }
+
+        $toFolder = $folder->get();
+
+        if( strtolower($toFolder) !== "inbox" ) {
+            $toFolder = "INBOX" . $this->get();
+        }
+
         $request = [
             "auth" => $this->user(),
-            "folderName" => "INBOX." . $this->get(),
-            "destFolderName" => "INBOX." . $folder->get(),
+            "folderName" => $fromFolder,
+            "destFolderName" => $toFolder,
             "uids" => $uids
         ];
         
