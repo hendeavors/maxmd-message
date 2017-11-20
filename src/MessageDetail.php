@@ -76,10 +76,11 @@ class MessageDetail implements Contracts\IMessageDetail
 
     protected function receivedDate()
     {
-        if( null === $this->message->receivedDate ) {
+        if( null === $this->message ) {
             return new \DateTime('now');
-        }
-        elseif(is_object($this->message->receivedDate)) {
+        } elseif( null === $this->message->receivedDate ) {
+            return new \DateTime('now');
+        } elseif(is_object($this->message->receivedDate)) {
             return $this->message->receivedDate;
         } 
 
@@ -261,6 +262,11 @@ class NullableMessageDetail extends MessageDetail
     public function replyTo()
     {
         return '';
+    }
+
+    protected function receivedDate()
+    {
+        return new \DateTime('now');
     }
 
     final protected function markRead()
