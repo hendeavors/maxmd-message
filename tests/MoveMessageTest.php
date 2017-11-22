@@ -9,6 +9,10 @@ class MoveMessageTest extends \Orchestra\Testbench\TestCase
 {
     public function setUp()
     {
+        // we are marking this skipped. when the message gets moved the test is over
+        // todo create routing to reset the move
+        $this->markTestSkipped();
+
         parent::setUp();
     }
 
@@ -62,5 +66,10 @@ class MoveMessageTest extends \Orchestra\Testbench\TestCase
         $response = $folder->MoveMessages([10], $tofolder)->ToObject();
 
         $this->assertTrue($response->success);
+    }
+
+    public function tearDown()
+    {        
+        parent::tearDown();
     }
 }

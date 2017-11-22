@@ -9,7 +9,7 @@ use Endeavors\MaxMD\Support\Client;
 
 class Folder implements IFolder
 {
-    use Traits\RequestValidator;
+    use Traits\RequestValidator, Traits\UserTrait;
 
     protected $response;
 
@@ -210,13 +210,6 @@ class Folder implements IFolder
     public function __toString()
     {
         return $this->get();
-    }
-
-    final protected function user()
-    {
-        $user = User::getInstance();
-
-        return $user->ToArray();
     }
 
     final protected function reserved()
