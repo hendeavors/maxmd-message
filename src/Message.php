@@ -85,17 +85,28 @@ class Message implements Contracts\IMessageDetail
         throw new Exceptions\InvalidMessageException("The message must have a sender, htmlBody true or false, and recipients");
     }
 
-    public function PatientFHIRQuery ( )
+    public function SendFHIRQuery()
     {
-        $request = [
-            "auth" => $this->user(),
-            "query" => []
-        ];
+        if( $this->message->hasKey('resources') && $this->message->hasKey('recipients') ) {
+            
+            $this->validateResources($this->message->get()['resources']);
+
+            $request = [
+                "auth" => $this->user(),
+                "query" => []
+            ];
+        }
+        
     }
 
     public function Success()
     {
         return null !== $this->response ? $this->response->return->success : false;
+    }
+
+    protected function validateResources($resources)
+    {
+
     }
 
     /**
