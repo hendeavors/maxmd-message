@@ -153,8 +153,6 @@ class MessageFhirQueryTest extends \Orchestra\Testbench\TestCase
                 'type' => 'TO'
             ]]
         ])->SendFHIRQuery();
-
-        //$this->assertTrue($response->success);
     }
     
     /**
@@ -170,8 +168,6 @@ class MessageFhirQueryTest extends \Orchestra\Testbench\TestCase
                 'type' => 'TO'
             ]]
         ])->SendFHIRQuery();
-
-        //$this->assertTrue($response->success);
     }
     
     /**
@@ -190,8 +186,6 @@ class MessageFhirQueryTest extends \Orchestra\Testbench\TestCase
                 'type' => 'TO'
             ]]
         ])->SendFHIRQuery();
-
-        //$this->assertTrue($response->success);
     }
 
     public function tearDown()
