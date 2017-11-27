@@ -98,9 +98,14 @@ class Message implements Contracts\IMessageDetail
                     "auth" => $this->user(),
                     "query" => [
                         "recipients" => $this->message->get()['recipients'],
-                        "resources" => $this->message->get()['resources']
+                        "resources" => $this->message->get()['resources'],
+                        "subject" => '(no subject)'
                     ]
                 ];
+
+                if( $this->message->hasKey('subject') ) {
+                    $request['query']['subject'] = $this->message->get()['subject'];
+                }
 
                 $this->response = Client::DirectMessage()->PatientFHIRQuery($request);
 
