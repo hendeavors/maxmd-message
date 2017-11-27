@@ -85,18 +85,31 @@ class Message implements Contracts\IMessageDetail
         throw new Exceptions\InvalidMessageException("The message must have a sender, htmlBody true or false, and recipients");
     }
 
+    /**
+     * @throws Endeavors\MaxMD\Message\Exceptions\InvalidFHIRQueryException, Endeavors\MaxMD\Message\Exceptions\InvalidResourceException
+     */
     public function SendFHIRQuery()
     {
         if( $this->message->hasKey('resources') && $this->message->hasKey('recipients') ) {
-            
-            $this->validateResources($this->message->get()['resources']);
 
-            $request = [
-                "auth" => $this->user(),
-                "query" => []
-            ];
+            if( $this->validateRecipients($this->message->get()['recipients']) && $this->validateResources($this->message->get()['resources']) ) {
+
+                $request = [
+                    "auth" => $this->user(),
+                    "query" => [
+                        "recipients" => $this->message->get()['recipients'],
+                        "resources" => $this->message->get()['resources']
+                    ]
+                ];
+
+                $this->response = Client::DirectMessage()->PatientFHIRQuery($request);
+
+                return $this;
+            }
         }
-        
+
+        // throw exception
+        throw new Exceptions\InvalidFHIRQueryException("The FHIR Query must have recipients and resources");
     }
 
     public function Success()
@@ -106,7 +119,21 @@ class Message implements Contracts\IMessageDetail
 
     protected function validateResources($resources)
     {
+        $validResources = [];
 
+        foreach($resources as $resource) {
+            $newResource = FHIRResourceType::create($resource);
+
+            $validResources[] = $newResource->toArray();
+        }
+
+        $newMessage = $this->message->get();
+        
+        $newMessage['resources'] = $validResources;
+        
+        $this->message = ModernArray::create($newMessage);
+
+        return count($validResources) > 0;
     }
 
     /**
@@ -136,7 +163,11 @@ class Message implements Contracts\IMessageDetail
 
         return count($this->message->get()['recipients']) > 0;
     }
-
+    
+    /**
+     * Remove the recipient from the recipients list from the message
+     * And set the message with a new recipients list
+     */
     protected function removeRecipient($recipient)
     {
         $recipients = $this->message->get()['recipients'];

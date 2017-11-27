@@ -2,6 +2,9 @@
 
 namespace Endeavors\MaxMD\Message;
 
+use Endeavors\Support\VO\ModernArray;
+use Endeavors\Support\VO\ModernString;
+
 /**
  * @todo we'll need to map resource to resourceType and parameters to queryParameters
  */
@@ -17,13 +20,24 @@ class FHIRResourceType
     {
         $this->fhirResourceType = ModernArray::create($value);
 
-        if( $this->fhirResourceType->hasKey('resource') ) {
-            $this->resourceType = ModernString::create($this->fhirResourceType->get(['resource']));
+        if( ! $this->fhirResourceType->hasKey('resource') ) {
+            throw new Exceptions\InvalidResourceException("Missing parameter: resource");
+        }
+
+        $this->resourceType = ModernString::create($this->fhirResourceType->get()['resource']);
+
+        if( $this->resourceType->isEmpty() ) {
+            throw new Exceptions\InvalidResourceException("The resource cannot be blank");
         }
 
         if( $this->fhirResourceType->hasKey('parameters') ) {
-            $this->queryParameters = ModernArray::create($this->fhirResourceType->get(['parameters']));
+            $this->queryParameters = ModernArray::create($this->fhirResourceType->get()['parameters']);
         }
+    }
+
+    public static function create($value)
+    {
+        return new static($value);
     }
 
     public function resource()
@@ -38,9 +52,14 @@ class FHIRResourceType
 
     public function toArray()
     {
-        return [
-            'resourceType' => $this->resource(),
-            'queryParameters' => $this->parameters()
+        $result = [
+            'resourceType' => $this->resource()->get()
         ];
+
+        if( null !== $this->queryParameters ) {
+            $result['queryParameters'] = $this->parameters()->get();
+        }
+
+        return $result;
     }
 }
