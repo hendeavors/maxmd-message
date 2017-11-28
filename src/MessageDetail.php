@@ -19,10 +19,6 @@ class MessageDetail implements Contracts\IMessageDetail
         if( ! is_object($message) || $message === null ) {
             $this->message = static::null();
         }
-
-        if( null !== $this->message ) {
-            $this->markRead();
-        }
     }
 
     public static function null()
@@ -188,7 +184,7 @@ class MessageDetail implements Contracts\IMessageDetail
         }
     }
 
-    protected function markRead()
+    public function markRead()
     {
         $request = [
             "auth" => $this->user(),
@@ -274,7 +270,7 @@ class NullableMessageDetail extends MessageDetail
         return new \DateTime('now');
     }
 
-    final protected function markRead()
+    final public function markRead()
     {
 
     }
