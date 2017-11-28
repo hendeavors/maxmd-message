@@ -15,8 +15,6 @@ class Message implements Contracts\IMessageDetail
 
     protected $response;
 
-    protected $succeeds = false;
-
     protected $strict = false;
 
     private function __construct($message, $strict = false)
@@ -120,6 +118,11 @@ class Message implements Contracts\IMessageDetail
     public function Success()
     {
         return null !== $this->response ? $this->response->return->success : false;
+    }
+
+    public function message()
+    {
+        return null !== $this->response ? $this->response->return->message : "Something went wrong sending your message";
     }
 
     protected function validateResources($resources)
