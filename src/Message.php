@@ -181,7 +181,9 @@ class Message implements Contracts\IMessageDetail
         $recipients = $this->message->get()['recipients'];
 
         foreach($recipients as $key => $value) {
-            if( $value['email'] === $recipient->email )
+            $email = is_object($value) ? $value->email : $value['email'];
+            
+            if( $email === $recipient->email )
                 unset($recipients[$key]);
         }
 
