@@ -84,8 +84,6 @@ class Attachment implements Contracts\IAttachment
             $displayable = true;
         } catch(\ErrorException $ex) {
             $displayable = false;
-
-            $this->download();
         } finally {
             return $displayable ? $content : $displayable;
         }
