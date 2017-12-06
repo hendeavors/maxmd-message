@@ -60,7 +60,7 @@ class Attachment implements Contracts\IAttachment
 
     /**
      * @throws Exceptions\StyleSheetNotFoundException
-     * @return string
+     * @return string|bool
      */
     public function display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cda.xsl')
     { 
@@ -82,14 +82,12 @@ class Attachment implements Contracts\IAttachment
             $content = $proc->transformToXML($xml);
 
             $displayable = true;
-    
-            return $content;
         } catch(\ErrorException $ex) {
             $displayable = false;
 
             $this->download();
         } finally {
-            return $displayable;
+            return $displayable ? $content : $displayable;
         }
     }
 
