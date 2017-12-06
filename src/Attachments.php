@@ -21,6 +21,13 @@ class Attachments implements Contracts\IAttachment
         }
     }
 
+    public function view($index = null)
+    {
+        if( null !== $index && $this->attachments->hasKey($index) ) {
+            $this->attachments->get()[$index]->view();
+        }
+    }
+
     public function get()
     {
         return $this->attachments->get();

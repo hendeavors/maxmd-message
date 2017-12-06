@@ -47,6 +47,51 @@ class Attachment implements Contracts\IAttachment
     {
         return $this->attachment->content;
     }
+    
+    /**
+     * Alias of display. Uses the default xsl stylesheet
+     * @throws Exceptions\StyleSheetNotFoundException
+     * @return string
+     */
+    public function view()
+    {
+        return $this->display();
+    }
+
+    /**
+     * @throws Exceptions\StyleSheetNotFoundException
+     * @return string
+     */
+    public function display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cda.xsl')
+    { 
+        $displayable = false;
+
+        if ( ! file_exists($path) ) {
+            throw new Exceptions\StyleSheetNotFoundException(sprintf("The stylesheet %s could not be found", $path));
+        }
+        
+        try {
+            $xsl = new \DOMDocument;
+            $xsl->load($path);
+    
+            $xml = simplexml_load_string($this->content());
+       
+            $proc = new \XSLTProcessor;
+            $proc->importStyleSheet($xsl); // attach the xsl rules
+    
+            $content = $proc->transformToXML($xml);
+
+            $displayable = true;
+    
+            return $content;
+        } catch(\ErrorException $ex) {
+            $displayable = false;
+
+            $this->download();
+        } finally {
+            return $displayable;
+        }
+    }
 
     public function hasFilename()
     {
