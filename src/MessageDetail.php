@@ -154,10 +154,28 @@ class MessageDetail implements Contracts\IMessageDetail
     public function attachments()
     {
         $attachments = [];
+
+        $attachmentAttributes = [];
+
+        $attributesToFill = [
+            'content',
+            'contentType',
+            'filename'
+        ];
         
         if( isset($this->message->attachmentList) ) {
             foreach(ModernArray::create($this->message->attachmentList)->get() as $attachment) {
-                $attachments[] = new Attachment($attachment);
+                if( is_string($attachment) ) {
+                    
+                    $attachmentAttributes[] = $attachment;
+                } else {
+                    $attachments[] = new Attachment($attachment);
+                }
+
+                if( count($attachmentAttributes) == 3 ) {
+                    $attachment = array_combine($attributesToFill, $attachmentAttributes);
+                    $attachments[] = new Attachment((object)$attachment);
+                }
             }
         }
 
