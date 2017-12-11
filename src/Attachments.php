@@ -2,7 +2,9 @@
 
 namespace Endeavors\MaxMD\Message;
 
-class Attachments implements Contracts\IAttachment
+use Endeavors\MaxMD\Message\Contracts;
+
+class Attachments implements Contracts\IAttachments
 {
     protected $attachments;
 

@@ -186,6 +186,36 @@ class Folder implements IFolder
         return $this->ToObject()->count;
     }
 
+    public function imapAttachments($dir = __DIR__)
+    {
+        $attachments = [];
+
+        $mailbox = new \PhpImap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
+        // Read all messaged into an array:
+        $mailsIds = $mailbox->searchMailbox('ALL');
+
+        if(!$mailsIds) {
+            die('Mailbox is empty');
+        }
+    
+        // Get the first message and save its attachment(s) to disk:
+        foreach($mailsIds as $mailid) {
+            
+            $mail = $mailbox->getMail($mailid);
+ 
+            foreach($mail->getAttachments() as $mailAttachment) {
+                $attachments[] = [
+                    'attachment' => new ImapAttachment($mailAttachment),
+                    'sender' => $mail->headers->fromaddress
+                ];
+            }
+        }
+
+        $attachments = new Attachments(ModernArray::create($attachments));
+        
+        return $attachments;
+    }
+
     public function ToObject()
     {
         if( null === $this->Raw() ) {
