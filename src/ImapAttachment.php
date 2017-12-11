@@ -100,6 +100,14 @@ class ImapAttachment implements Contracts\IAttachment
             $this->attachment = NullableAttachment::null();
         }
     }
+
+    public function toArray()
+    {
+        return [
+            'filename' => $this->filename(),
+            'filepath' => $this->attachment->filePath
+        ];
+    }
 }
 
 class NullableAttachment
