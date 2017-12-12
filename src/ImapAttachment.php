@@ -31,6 +31,11 @@ class ImapAttachment implements Contracts\IAttachment
         }
     }
 
+    public function id()
+    {
+        return $this->attachment->id;
+    }
+
     public function filename()
     {
         $this->checkAttribute('name');
@@ -46,6 +51,11 @@ class ImapAttachment implements Contracts\IAttachment
     public function content()
     {
         return file_get_contents($this->attachment->filePath);
+    }
+
+    public function filePath()
+    {
+        return $this->attachment->filePath;
     }
     
     /**
@@ -105,7 +115,8 @@ class ImapAttachment implements Contracts\IAttachment
     {
         return [
             'filename' => $this->filename(),
-            'filepath' => $this->attachment->filePath
+            'filepath' => $this->attachment->filePath,
+            'id' => $this->id()
         ];
     }
 }
