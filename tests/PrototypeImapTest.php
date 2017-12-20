@@ -26,6 +26,12 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
         foreach($attachments->get() as $attachment) {
             $this->assertNotNull($attachment['attachment']->view());
         }
+
+        $attachments = $folder->imapAttachments();
+    
+        foreach($attachments->get() as $attachment) {
+            $this->assertNotNull($attachment['attachment']->view());
+        }
     
         $this->assertInstanceOf(Attachments::class, $attachments);
     }
