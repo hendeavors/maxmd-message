@@ -14,26 +14,9 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
         parent::setUp();
     }
 
-    public function testImapAttachmentsFromMessageDetail()
+    public function testProductionAttachments()
     {
-
-        User::login("bryanp1231@healthendeavors.direct.eval.md", "JW9gzj3MlUJA1VbFdi5a6Teax83wSg");
-            
-        $folder = Folder::create("inbox");
-    
-        $attachments = $folder->attachments();
-    
-        foreach($attachments->get() as $attachment) {
-            $this->assertNotNull($attachment['attachment']->view());
-        }
-
-        $attachments = $folder->imapAttachments();
-    
-        foreach($attachments->get() as $attachment) {
-            $this->assertNotNull($attachment['attachment']->view());
-        }
-    
-        $this->assertInstanceOf(Attachments::class, $attachments);
+        
     }
 
     public function tearDown()

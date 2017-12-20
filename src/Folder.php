@@ -202,7 +202,7 @@ class Folder implements IFolder
     {
         $attachments = [];
 
-        $mailbox = new \PhpImap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
+        $mailbox = new \PhpImap\Mailbox('{imap.directmdemail.com:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
