@@ -185,8 +185,11 @@ class Folder implements IFolder
         
         return $this->ToObject()->count;
     }
-
-    public function imapAttachments($dir = __DIR__)
+    
+    /**
+     * @return attachments
+     */
+    public function attachments($dir = __DIR__)
     {
         $attachments = [];
 

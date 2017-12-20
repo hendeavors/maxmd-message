@@ -21,7 +21,7 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
             
         $folder = Folder::create("inbox");
     
-        $attachments = $folder->imapAttachments();
+        $attachments = $folder->attachments();
     
         foreach($attachments->get() as $attachment) {
             $this->assertNotNull($attachment['attachment']->view());
