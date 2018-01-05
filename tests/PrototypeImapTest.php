@@ -12,6 +12,8 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->markTestSkipped();
     }
 
     public function testImapAttachmentsFromMessageDetail()

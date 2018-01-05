@@ -146,14 +146,35 @@ class Folder implements IFolder
 
         $folder = implode('.', $names);
 
-        $request = [
-            "auth" => $this->user(),
-            "folderName" => $folder
-        ];
-        
-        $this->response = Client::DirectMessage()->GetMessages($request);
+        $mailbox = $this->imapConnection();
+        // Read all messaged into an array:
+        $mailsIds = $mailbox->searchMailbox('ALL');
 
-        return Messages::create($this->ToObject());
+        if(!$mailsIds) {
+            //die('Mailbox is empty');
+        }
+
+
+        $mail = [];
+    
+        // Get the first message and save its attachment(s) to disk:
+        foreach($mailsIds as $mailid) {
+
+            $message = $mailbox->getMailOnly($mailid);
+            
+            $mail['messages'][] = $message->folder = $folder;
+        }
+        
+        //dd($mail);
+
+        // $request = [
+        //     "auth" => $this->user(),
+        //     "folderName" => $folder
+        // ];
+        
+        // $this->response = Client::DirectMessage()->GetMessages($request);
+
+        return Messages::create((object)$mail);
     }
 
     public function UnreadMessages()
@@ -202,7 +223,7 @@ class Folder implements IFolder
     {
         $attachments = [];
 
-        $mailbox = new \PhpImap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
+        $mailbox = $this->imapConnection($dir);
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
@@ -265,5 +286,10 @@ class Folder implements IFolder
             'Drafts',
             'Spam'
         ]);
+    }
+
+    private function imapConnection($dir = __DIR__)
+    {
+        return new Imap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
     }
 }
