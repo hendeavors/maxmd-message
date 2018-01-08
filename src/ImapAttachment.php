@@ -68,6 +68,11 @@ class ImapAttachment implements Contracts\IAttachment
         return $this->display();
     }
 
+    public function mobileView()
+    {
+        return $this->display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'mobilecda.xsl');
+    }
+
     /**
      * @throws Exceptions\StyleSheetNotFoundException
      * @return string|bool
