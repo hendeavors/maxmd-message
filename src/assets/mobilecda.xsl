@@ -62,7 +62,7 @@
 			<div id="cdabody">
 				<xsl:if test="not(//n1:nonXMLBody)">
 				   <xsl:if test="count(/n1:ClinicalDocument/n1:component/n1:structuredBody/n1:component[n1:section]) &gt; 1">
-					<xsl:call-template name="make-tableofcontents"/>
+					
 				   </xsl:if>
 				</xsl:if>
             <!-- produce human readable document content -->
@@ -973,13 +973,9 @@
                         </xsl:for-each>
                      </td>
                   </tr>
-					<tr>
-						<td colspan="4">
-							<span class="pure-button" style="padding-top:0;padding-bottom:0" onclick="$('tr.hide').fadeToggle();$('#cdabody').packery()">Patient Detail</span>
-						</td>
-					</tr>
+					
                   <xsl:if test="n1:patient/n1:raceCode | (n1:patient/n1:ethnicGroupCode)">
-                     <tr class="hide" style="display:none">
+                     <tr>
                         <td bgcolor="#3399ff">
                            <span class="td_label">
                               <xsl:text>Race</xsl:text>
@@ -998,7 +994,7 @@
                            </xsl:choose>
                         </td>
                   </tr>
-                  <tr class="hide" style="display:none">
+                  <tr>
                         <td bgcolor="#3399ff">
                            <span class="td_label">
                               <xsl:text>Ethnicity</xsl:text>
@@ -1022,7 +1018,7 @@
 					<xsl:call-template name="show-contactInfo">
 						<xsl:with-param name="contact" select="."/>
 					</xsl:call-template>
-                  <tr class="hide" style="display:none">
+                  <tr>
                      <td bgcolor="#3399ff">
                         <span class="td_label">
                            <xsl:text>Patient IDs</xsl:text>
@@ -1594,7 +1590,7 @@
    <!-- show-contactInfo -->
    <xsl:template name="show-contactInfo">
       <xsl:param name="contact"/>
-		<tr style="display:none" class="hide">
+		<tr>
 			<td bgcolor="#3399ff">
 				<span class="td_label">
 				<xsl:text>Contact info</xsl:text>
