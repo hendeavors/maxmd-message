@@ -55,7 +55,7 @@
 				<xsl:call-template name="recordTargetDisp"/>
 			</div>
 			<p style="display:inline-block;vertical-align:top;font-size:75%">
-			You can arrange the document to your preferences. Move sections by dragging them. Hide by closing. Use the TOC to review.
+			
 			</p>
 		</div>
 
