@@ -90,11 +90,11 @@ class MessageDetail implements Contracts\IMessageDetail
      */
     public function sentDate()
     {
-        if(is_object($this->message->sentDate)) {
-            return $this->message->sentDate;
+        if(is_object($this->message->date)) {
+            return $this->message->date;
         } 
 
-        return new \DateTime($this->message->sentDate);
+        return new \DateTime($this->message->date);
     }
     
     /**
