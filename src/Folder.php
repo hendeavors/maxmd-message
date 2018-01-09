@@ -134,19 +134,9 @@ class Folder implements IFolder
      */
     public function Messages()
     {   
-        $folder = strtolower($this->get());
+        $folder = $this->formatFolder();
 
-        $fqFolderName = explode('.', $folder);
-
-        $names = [];
-
-        foreach($fqFolderName as $fqName) {
-            $names[] = ucfirst($fqName);
-        }
-
-        $folder = implode('.', $names);
-
-        $mailbox = $this->imapConnection();
+        $mailbox = Imap\Connection::make($folder);
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
@@ -160,19 +150,10 @@ class Folder implements IFolder
         // Get the first message and save its attachment(s) to disk:
         foreach($mailsIds as $mailid) {
 
-            $message = $mailbox->getMailOnly($mailid);
+            $message = $mailbox->getMail($mailid);
             
             $mail['messages'][] = $message->folder = $folder;
         }
-        
-        //dd($mail);
-
-        // $request = [
-        //     "auth" => $this->user(),
-        //     "folderName" => $folder
-        // ];
-        
-        // $this->response = Client::DirectMessage()->GetMessages($request);
 
         return Messages::create((object)$mail);
     }
@@ -223,7 +204,7 @@ class Folder implements IFolder
     {
         $attachments = [];
 
-        $mailbox = $this->imapConnection($dir);
+        $mailbox = Imap\Connection::make($this->formatFolder(), $dir);
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
@@ -270,7 +251,12 @@ class Folder implements IFolder
 
     public function get()
     {
-        return $this->folder;
+        return $this->formatFolder();
+    }
+
+    public function all()
+    {
+        return Imap\Connection::make()->getListingFolders($pattern = '*');
     }
 
     public function __toString()
@@ -288,8 +274,18 @@ class Folder implements IFolder
         ]);
     }
 
-    private function imapConnection($dir = __DIR__)
+    private function formatFolder()
     {
-        return new Imap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
+        $folder = strtolower($this->folder);
+        
+        $fqFolderName = explode('.', $folder);
+        
+        $names = [];
+        
+        foreach($fqFolderName as $fqName) {
+            $names[] = ucfirst($fqName);
+        }
+        
+        return implode('.', $names);
     }
 }
