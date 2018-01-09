@@ -74,13 +74,13 @@ class MessageDetail implements Contracts\IMessageDetail
     {
         if( null === $this->message ) {
             return new \DateTime('now');
-        } elseif( null === $this->message->receivedDate ) {
+        } elseif( null === $this->message->date ) {
             return new \DateTime('now');
-        } elseif(is_object($this->message->receivedDate)) {
-            return $this->message->receivedDate;
+        } elseif(is_object($this->message->date)) {
+            return $this->message->date;
         } 
 
-        return new \DateTime($this->message->receivedDate);
+        return new \DateTime($this->message->date);
     }
     
     /**
