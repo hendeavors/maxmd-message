@@ -12,11 +12,12 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
     public function setUp()
     {
         parent::setUp();
+
+        //$this->markTestSkipped();
     }
 
     public function testImapAttachmentsFromMessageDetail()
     {
-
         User::login("bryanp1231@healthendeavors.direct.eval.md", "JW9gzj3MlUJA1VbFdi5a6Teax83wSg");
             
         $folder = Folder::create("inbox");

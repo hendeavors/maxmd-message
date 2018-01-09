@@ -134,26 +134,28 @@ class Folder implements IFolder
      */
     public function Messages()
     {   
-        $folder = strtolower($this->get());
+        $folder = $this->formatFolder();
 
-        $fqFolderName = explode('.', $folder);
+        $mailbox = Imap\Connection::make($folder);
+        // Read all messaged into an array:
+        $mailsIds = $mailbox->searchMailbox('ALL');
 
-        $names = [];
-
-        foreach($fqFolderName as $fqName) {
-            $names[] = ucfirst($fqName);
+        if(!$mailsIds) {
+            //die('Mailbox is empty');
         }
 
-        $folder = implode('.', $names);
 
-        $request = [
-            "auth" => $this->user(),
-            "folderName" => $folder
-        ];
-        
-        $this->response = Client::DirectMessage()->GetMessages($request);
+        $mail = [];
+    
+        // Get the first message and save its attachment(s) to disk:
+        foreach($mailsIds as $mailid) {
 
-        return Messages::create($this->ToObject());
+            $message = $mailbox->getMail($mailid);
+            
+            $mail['messages'][] = $message->folder = $folder;
+        }
+
+        return Messages::create((object)$mail);
     }
 
     public function UnreadMessages()
@@ -202,7 +204,7 @@ class Folder implements IFolder
     {
         $attachments = [];
 
-        $mailbox = new \PhpImap\Mailbox('{rs5.max.md:993/imap/ssl/novalidate-cert}' . $this->get(), User::getInstance()->getUsername(),  User::getInstance()->getPassword(), $dir);
+        $mailbox = Imap\Connection::make($this->formatFolder(), $dir);
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
@@ -249,7 +251,12 @@ class Folder implements IFolder
 
     public function get()
     {
-        return $this->folder;
+        return $this->formatFolder();
+    }
+
+    public function all()
+    {
+        return Imap\Connection::make()->getListingFolders($pattern = '*');
     }
 
     public function __toString()
@@ -265,5 +272,20 @@ class Folder implements IFolder
             'Drafts',
             'Spam'
         ]);
+    }
+
+    private function formatFolder()
+    {
+        $folder = strtolower($this->folder);
+        
+        $fqFolderName = explode('.', $folder);
+        
+        $names = [];
+        
+        foreach($fqFolderName as $fqName) {
+            $names[] = ucfirst($fqName);
+        }
+        
+        return implode('.', $names);
     }
 }

@@ -33,17 +33,17 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function id()
     {
-        return $this->message->uid;
+        return $this->message->id;
     }
 
     public function sender()
     {
-        return $this->message->sender;
+        return $this->message->headers->fromaddress;
     }
 
     public function body()
     {
-        return $this->message->body;
+        return $this->message->textHtml;
     }
 
     public function text()
