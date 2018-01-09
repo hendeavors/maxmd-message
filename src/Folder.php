@@ -151,8 +151,10 @@ class Folder implements IFolder
         foreach($mailsIds as $mailid) {
 
             $message = $mailbox->getMail($mailid);
+
+            $message->folder = $folder;
             
-            $mail['messages'][] = $message->folder = $folder;
+            $mail['messages'][] = $message;
         }
 
         return Messages::create((object)$mail);
