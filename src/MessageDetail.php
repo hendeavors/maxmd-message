@@ -26,6 +26,11 @@ class MessageDetail implements Contracts\IMessageDetail
         return new NullableMessageDetail();
     }
 
+    public function originalMessage()
+    {
+        return $this->message;
+    }
+
     public function uid()
     {
         return $this->id;
@@ -148,9 +153,12 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function hasAttachments()
     {
-        return $this->attachments->count() > 0;
+        return count($this->message->getAttachments()) > 0;
     }
-
+    
+    /**
+     * deprecated
+     */
     public function attachments()
     {
         $attachments = [];
@@ -163,8 +171,8 @@ class MessageDetail implements Contracts\IMessageDetail
             'filename'
         ];
         
-        if( isset($this->message->attachmentList) ) {
-            foreach(ModernArray::create($this->message->attachmentList)->get() as $attachment) {
+        if( isset($this->message->attachments) ) {
+            foreach(ModernArray::create($this->message->attachments)->get() as $attachment) {
                 if( is_string($attachment) ) {
                     
                     $attachmentAttributes[] = $attachment;
