@@ -132,18 +132,22 @@ class Folder implements IFolder
     /**
      * for now prefix with "INBOX" to see messages of another folder
      */
-    public function Messages()
+    public function Messages($dir = null)
     {   
         $folder = $this->formatFolder();
 
         $mailbox = Imap\Connection::make($folder);
+
+        if( null !== $dir && is_dir($dir) ) {
+            $mailbox = Imap\Connection::make($folder, $dir);
+        }
+        
         // Read all messaged into an array:
         $mailsIds = $mailbox->searchMailbox('ALL');
 
         if(!$mailsIds) {
-            //die('Mailbox is empty');
+            die('Mailbox is empty');
         }
-
 
         $mail = [];
     
