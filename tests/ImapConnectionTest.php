@@ -7,6 +7,7 @@ use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 use Endeavors\MaxMD\Message\Attachments;
 use Endeavors\MaxMD\Message\Imap\Connection;
+use Endeavors\MaxMD\Message\Imap\Mailbox;
 
 class ImapConnectionTest extends \Orchestra\Testbench\TestCase
 {
@@ -42,7 +43,7 @@ class ImapConnectionTest extends \Orchestra\Testbench\TestCase
         
         $conn = Connection::make('Inbox', __DIR__);
 
-        $this->assertInstanceOf(\PhpImap\Mailbox::class, $conn);
+        $this->assertInstanceOf(Mailbox::class, $conn);
     }
 
     public function tearDown()

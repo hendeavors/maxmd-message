@@ -8,17 +8,6 @@ class MailConnection
 {
     const IMAP_PATH = '{rs5.max.md:993/imap/ssl/novalidate-cert}';
 
-    
-
-    /**
-     * Handle dynamic, static calls to the object.
-     *
-     * @param  string  $method
-     * @param  array   $args
-     * @return mixed
-     *
-     * @throws \RuntimeException
-     */
     public function make(...$args)
     {
         $folder = null;
@@ -27,7 +16,7 @@ class MailConnection
             $folder = $args[0];
         }
 
-        $connection = new \PhpImap\Mailbox($this->getFullPath($folder), User::getInstance()->getUsername(),  User::getInstance()->getPassword());
+        $connection = new Mailbox($this->getFullPath($folder), User::getInstance()->getUsername(),  User::getInstance()->getPassword());
 
         return $connection;
     }

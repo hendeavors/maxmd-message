@@ -146,7 +146,7 @@ class Folder implements IFolder
         $mailsIds = $mailbox->searchMailbox('ALL');
 
         if(!$mailsIds) {
-            die('Mailbox is empty');
+            //die('Mailbox is empty');
         }
 
         $mail = [];
@@ -215,7 +215,7 @@ class Folder implements IFolder
         $mailsIds = $mailbox->searchMailbox('ALL');
 
         if(!$mailsIds) {
-            die('Mailbox is empty');
+            //die('Mailbox is empty');
         }
     
         // Get the first message and save its attachment(s) to disk:

@@ -7,41 +7,7 @@ use PhpImap\IncomingMailAttachment;
 
 class Mailbox extends \PhpImap\Mailbox
 {
-    /**
-     * We wont store attachments automatically
-     */
-    public function getMailOnly($mailId, $markAsSeen = true)
-    {
-        return $this->getMail($mailId, $markAsSeen, false);
-    }
-    /**
-	 * Get mail data
-	 *
-	 * @param $mailId
-	 * @param bool $markAsSeen
-	 * @return IncomingMail
-	 */
-    public function getMail($mailId, $markAsSeen = true, $storeAttachments = true) 
-    {
-		$mail = new IncomingMail();
-		$mail->setHeader($this->getMailHeader($mailId));
-
-		$mailStructure = $this->imap('fetchstructure', [$mailId, FT_UID]);
-
-		if(empty($mailStructure->parts)) {
-			$this->initMailPart($mail, $mailStructure, 0, $markAsSeen, $storeAttachments);
-		}
-		else {
-			foreach($mailStructure->parts as $partNum => $partStructure) {
-				$this->initMailPart($mail, $partStructure, $partNum + 1, $markAsSeen, $storeAttachments);
-			}
-		}
-
-		return $mail;
-	}
-
-    protected function initMailPart(IncomingMail $mail, $partStructure, $partNum, $markAsSeen = true, $storeAttachments = true) 
-    {
+    protected function initMailPart(IncomingMail $mail, $partStructure, $partNum, $markAsSeen = true) {
 		$options = FT_UID;
 		if(!$markAsSeen) {
 			$options |= FT_PEEK;
@@ -109,10 +75,8 @@ class Mailbox extends \PhpImap\Mailbox
 			$attachment->id = $attachmentId;
 			$attachment->contentId = $partStructure->ifid ? trim($partStructure->id, " <>") : null;
 			$attachment->name = $fileName;
-            $attachment->disposition = (isset($partStructure->disposition) ? $partStructure->disposition : null);
-            
-            // we want to use an option here to decide whether or not to store an attachment
-			if($this->attachmentsDir && $storeAttachments) {
+			$attachment->disposition = (isset($partStructure->disposition) ? $partStructure->disposition : null);
+			if($this->attachmentsDir) {
 				$replace = [
 					'/\s/' => '_',
 					'/[^0-9a-zа-яіїє_\.]/iu' => '',
@@ -120,7 +84,7 @@ class Mailbox extends \PhpImap\Mailbox
 					'/(^_)|(_$)/' => '',
 				];
 				$fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
-				$attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $fileSysName;
+				$attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
 				if(strlen($attachment->filePath) > 255) {
 					$ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
