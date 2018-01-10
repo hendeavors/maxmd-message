@@ -4,9 +4,36 @@ namespace Endeavors\MaxMD\Message\Imap;
 
 use PhpImap\IncomingMail;
 use PhpImap\IncomingMailAttachment;
+use FilesystemIterator;
 
 class Mailbox extends \PhpImap\Mailbox
 {
+    /**
+	 * Get mail data
+	 *
+	 * @param $mailId
+	 * @param bool $markAsSeen
+	 * @return IncomingMail
+	 */
+	public function getMail($mailId, $markAsSeen = true) {
+		$mail = new IncomingMail();
+		$mail->setHeader($this->getMailHeader($mailId));
+
+		$mailStructure = $this->imap('fetchstructure', [$mailId, FT_UID]);
+
+		if(empty($mailStructure->parts)) {
+			$this->initMailPart($mail, $mailStructure, 0, $markAsSeen);
+		}
+		else {
+            $this->cleanMailAttachmentDirectory($mail);
+			foreach($mailStructure->parts as $partNum => $partStructure) {
+				$this->initMailPart($mail, $partStructure, $partNum + 1, $markAsSeen);
+			}
+		}
+
+		return $mail;
+    }
+    
     protected function initMailPart(IncomingMail $mail, $partStructure, $partNum, $markAsSeen = true) {
 		$options = FT_UID;
 		if(!$markAsSeen) {
@@ -83,7 +110,9 @@ class Mailbox extends \PhpImap\Mailbox
 					'/_+/' => '_',
 					'/(^_)|(_$)/' => '',
 				];
-				$fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
+                $fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
+                
+                $this->makeMailAttachmentDirectory($mail);
 				$attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
 				if(strlen($attachment->filePath) > 255) {
@@ -121,5 +150,84 @@ class Mailbox extends \PhpImap\Mailbox
 				}
 			}
 		}
-	}
+    }
+    
+    public function makeMailAttachmentDirectory($mail)
+    {
+        if( ! is_dir($this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id) ) {
+            return mkdir($this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id, 0755, true);
+        }
+    }
+
+    public function cleanMailAttachmentDirectory($mail)
+    {
+        $this->cleanDirectory($this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id);
+    }
+
+    protected function deleteDirectory($directory, $preserve = false)
+    {
+        if (! is_dir($directory)) {
+            return false;
+        }
+
+        $items = new FilesystemIterator($directory);
+
+        foreach ($items as $item) {
+            // If the item is a directory, we can just recurse into the function and
+            // delete that sub-directory otherwise we'll just delete the file and
+            // keep iterating through each file until the directory is cleaned.
+            if ($item->isDir() && ! $item->isLink()) {
+                $this->deleteDirectory($item->getPathname());
+            }
+
+            // If the item is just a file, we can go ahead and delete it since we're
+            // just looping through and waxing all of the files in this directory
+            // and calling directories recursively, so we delete the real path.
+            else {
+                $this->delete($item->getPathname());
+            }
+        }
+
+        if (! $preserve) {
+            @rmdir($directory);
+        }
+
+        return true;
+    }
+
+    /**
+     * Empty the specified directory of all files and folders.
+     *
+     * @param  string  $directory
+     * @return bool
+     */
+    protected function cleanDirectory($directory)
+    {
+        return $this->deleteDirectory($directory, true);
+    }
+
+    /**
+     * Delete the file at a given path.
+     *
+     * @param  string|array  $paths
+     * @return bool
+     */
+    public function delete($paths)
+    {
+        $paths = is_array($paths) ? $paths : func_get_args();
+
+        $success = true;
+
+        foreach ($paths as $path) {
+            try {
+                if (! @unlink($path)) {
+                    $success = false;
+                }
+            } catch (\ErrorException $e) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
 }

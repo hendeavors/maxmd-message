@@ -66,6 +66,8 @@ class Attachment implements Contracts\IAttachment
     { 
         $displayable = false;
 
+        $content = '';
+
         if ( ! file_exists($path) ) {
             throw new Exceptions\StyleSheetNotFoundException(sprintf("The stylesheet %s could not be found", $path));
         }
