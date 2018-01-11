@@ -25,7 +25,6 @@ class Mailbox extends \PhpImap\Mailbox
 			$this->initMailPart($mail, $mailStructure, 0, $markAsSeen);
 		}
 		else {
-            $this->cleanMailAttachmentDirectory($mail);
 			foreach($mailStructure->parts as $partNum => $partStructure) {
 				$this->initMailPart($mail, $partStructure, $partNum + 1, $markAsSeen);
 			}
