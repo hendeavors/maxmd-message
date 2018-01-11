@@ -86,7 +86,7 @@ class Mailbox extends \PhpImap\Mailbox
 		}
 
 		if($isAttachment) {
-			$attachmentId = mt_rand() . mt_rand();
+			$attachmentId = sha1($mail->id . $params['filename']);
 
 			if(empty($params['filename']) && empty($params['name'])) {
 				$fileName = $attachmentId . '.' . strtolower($partStructure->subtype);
@@ -112,14 +112,17 @@ class Mailbox extends \PhpImap\Mailbox
                 $fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
                 
                 $this->makeMailAttachmentDirectory($mail);
-				$attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
-				if(strlen($attachment->filePath) > 255) {
-					$ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
-					$attachment->filePath = substr($attachment->filePath, 0, 255 - 1 - strlen($ext)) . "." . $ext;
-				}
+                $attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
-				file_put_contents($attachment->filePath, $data);
+                if(strlen($attachment->filePath) > 255) {
+                    $ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
+                    $attachment->filePath = substr($attachment->filePath, 0, 255 - 1 - strlen($ext)) . "." . $ext;
+                }
+                    
+                // if the directory exists, we no longer need to place a new file
+                // as once a message is created it exists until being purged
+                file_put_contents($attachment->filePath, $data);
 			}
 			$mail->addAttachment($attachment);
 		}
@@ -151,11 +154,16 @@ class Mailbox extends \PhpImap\Mailbox
 		}
     }
     
+    /**
+     * @return Boolean
+     */
     public function makeMailAttachmentDirectory($mail)
     {
         if( ! is_dir($this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id) ) {
             return mkdir($this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id, 0755, true);
         }
+
+        return false;
     }
 
     public function cleanMailAttachmentDirectory($mail)
