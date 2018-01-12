@@ -6,7 +6,7 @@ use Endeavors\MaxMD\Message\User;
 
 class AttachmentConnection
 {
-    const IMAP_PATH = '{rs5.max.md:993/imap/ssl/novalidate-cert}';
+    const IMAP_PATH = '{imap.directmdemail.com:993/imap/ssl/novalidate-cert}';
 
     public function make(...$args)
     {
