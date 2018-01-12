@@ -5,9 +5,18 @@ namespace Endeavors\MaxMD\Message\Imap;
 use PhpImap\IncomingMail;
 use PhpImap\IncomingMailAttachment;
 use FilesystemIterator;
+use Endeavors\MaxMD\Message\Exceptions\Imap;
 
 class Mailbox extends \PhpImap\Mailbox
 {
+    public function searchMailbox($criteria = 'ALL') 
+    {
+        try {
+            return parent::searchMailbox($criteria);
+        } catch(\PhpImap\ConnectionException $ex) {
+            throw new Imap\UnauthorizedAccessException(sprintf("The credentials supplied are invalid."));
+        }
+	}
     /**
 	 * Get mail data
 	 *

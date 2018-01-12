@@ -20,21 +20,27 @@ class ImapConnectionTest extends \Orchestra\Testbench\TestCase
     {
         User::login("bryanp1231@healthendeavors.direct.eval.md", "JW9gzj3MlUJA1VbFdi5a6Teax83wSg");
             
-        Connection::make();
+        $conn = Connection::make();
+
+        $this->assertInstanceOf(Mailbox::class, $conn);
     }
 
     public function testInboxMailConnection()
     {
         User::login("bryanp1231@healthendeavors.direct.eval.md", "JW9gzj3MlUJA1VbFdi5a6Teax83wSg");
         
-        Connection::make('Inbox');
+        $conn = Connection::make('Inbox');
+
+        $this->assertInstanceOf(Mailbox::class, $conn);
     }
 
     public function testSentMailConnection()
     {
         User::login("bryanp1231@healthendeavors.direct.eval.md", "JW9gzj3MlUJA1VbFdi5a6Teax83wSg");
         
-        Connection::make('Inbox.Sent');
+        $conn = Connection::make('Inbox.Sent');
+
+        $this->assertInstanceOf(Mailbox::class, $conn);
     }
 
     public function testAttachmentConnection()
