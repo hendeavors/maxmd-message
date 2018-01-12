@@ -131,7 +131,10 @@ class Mailbox extends \PhpImap\Mailbox
                     
                 // if the directory exists, we no longer need to place a new file
                 // as once a message is created it exists until being purged
-                file_put_contents($attachment->filePath, $data);
+                // only write to the file if it doesnt exist
+                if( ! file_exists($attachment->filePath) ) {
+                    file_put_contents($attachment->filePath, $data);
+                }
 			}
 			$mail->addAttachment($attachment);
 		}
