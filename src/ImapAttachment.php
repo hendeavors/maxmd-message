@@ -68,6 +68,11 @@ class ImapAttachment implements Contracts\IAttachment
         return $this->display();
     }
 
+    public function mobileView()
+    {
+        return $this->display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'mobilecda.xsl');
+    }
+
     /**
      * @throws Exceptions\StyleSheetNotFoundException
      * @return string|bool
@@ -75,6 +80,8 @@ class ImapAttachment implements Contracts\IAttachment
     public function display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cda.xsl')
     { 
         $displayable = false;
+
+        $content = '';
 
         if ( ! file_exists($path) ) {
             throw new Exceptions\StyleSheetNotFoundException(sprintf("The stylesheet %s could not be found", $path));
