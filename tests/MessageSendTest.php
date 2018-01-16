@@ -28,6 +28,23 @@ class MessageSendTest extends \Orchestra\Testbench\TestCase
 
         $this->assertTrue($response->success);
     }
+
+    public function testSendingMessageToValidEmailButInvalidDirectAccount()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'adam@healthendeavors.com',
+                'type' => 'TO'
+            ]]
+        ])->Send();
+
+        $this->assertTrue($response->success);
+    }
     
     /**
      * Message::create defaults to loose
