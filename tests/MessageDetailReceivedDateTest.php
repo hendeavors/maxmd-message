@@ -6,7 +6,7 @@ use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 use Endeavors\MaxMD\Message\MessageDetail;
 
-class MessageDetailReceivedDataTest extends \Orchestra\Testbench\TestCase
+class MessageDetailReceivedDateTest extends \Orchestra\Testbench\TestCase
 {
     public function setUp()
     {
