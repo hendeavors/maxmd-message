@@ -59,6 +59,10 @@ class MessageDetail implements Contracts\IMessageDetail
     public function subject()
     {
         try {
+            if( null === $this->message->subject ) {
+                return '(no subject)';
+            }
+
             return $this->message->subject;
         } catch(\Exception $ex) {
             return '(no subject)';

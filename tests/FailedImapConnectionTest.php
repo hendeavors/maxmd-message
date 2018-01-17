@@ -13,6 +13,8 @@ class FailedImapConnectionTest extends \Orchestra\Testbench\TestCase
 {
     public function setUp()
     {
+        User::logout();
+        
         parent::setUp();
     }
 
