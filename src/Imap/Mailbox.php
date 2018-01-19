@@ -3,7 +3,6 @@
 namespace Endeavors\MaxMD\Message\Imap;
 
 use PhpImap\IncomingMail;
-use PhpImap\IncomingMailAttachment;
 use FilesystemIterator;
 use Endeavors\MaxMD\Message\Exceptions\Imap;
 
@@ -121,12 +120,15 @@ class Mailbox extends \PhpImap\Mailbox
                 $fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
                 
                 $this->makeMailAttachmentDirectory($mail);
-
+                
+                $attachment->relativeFilePath = DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
                 $attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
                 if(strlen($attachment->filePath) > 255) {
                     $ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
                     $attachment->filePath = substr($attachment->filePath, 0, 255 - 1 - strlen($ext)) . "." . $ext;
+                    // todo test
+                    $attachment->relativeFilePath = substr($attachment->relativeFilePath, 0, strlen($attachment->relativeFilePath) - 1 - strlen($ext)) . "." . $ext;
                 }
                     
                 // if the directory exists, we no longer need to place a new file
