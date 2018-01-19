@@ -37,7 +37,21 @@ class User implements Contracts\IAuthenticableUser
     {
         static::$instance = null;
     }
+    
+    /**
+     * We may need a fresh login everytime, log the user out
+     * Then log then recreate the user
+     */
+    public static function freshLogin($username, $password)
+    {
+        static::logout();
 
+        return static::login($username, $password);
+    }
+    
+    /**
+     * Login a user once per lifetime of object
+     */
     public static function login($username, $password)
     {
         return static::create($username, $password);
