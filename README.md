@@ -1,6 +1,6 @@
 # maxmd-message
 
-This library is an adaptation of the api provided by maxmd. The idea is to make it dead simple to build an inbox.
+This library is an adaptation of the api provided by maxmd. The idea is to make it dead simple to build an inbox using php.
 
 # Authentication
 

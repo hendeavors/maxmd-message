@@ -1,6 +1,6 @@
 {
     "name": "endeavors/maxmd-message",
-    "description": "Provide an easy api to integrate with maxmd",
+    "description": "Maxmd messaging api php client",
     "type": "library",
     "license": "MIT",
     "authors": [
