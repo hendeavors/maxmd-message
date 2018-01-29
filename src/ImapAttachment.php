@@ -57,6 +57,11 @@ class ImapAttachment implements Contracts\IAttachment
     {
         return $this->attachment->filePath;
     }
+
+    public function relativeFilePath()
+    {
+        return $this->attachment->relativeFilePath;
+    }
     
     /**
      * Alias of display. Uses the default xsl stylesheet
