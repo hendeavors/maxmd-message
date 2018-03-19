@@ -34,7 +34,16 @@ class CreateFolderTest extends \Orchestra\Testbench\TestCase
         $this->assertTrue($response->success);
 
         $response = $folder->Make()->ToObject();
-        
+
         $this->assertFalse($response->success);
+    }
+
+    public function tearDown()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $folder = Folder::create("Some.Folder");
+
+        $folder->Delete();
     }
 }
