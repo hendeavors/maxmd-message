@@ -10,12 +10,6 @@
         }
     ],
     "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/hendeavors/maxmd-support.git"
-        }
-    ],
     "require": {
         "endeavors/maxmd-support": "^1.0",
         "endeavors/support-vo": "1.2.*@dev",
