@@ -17,18 +17,9 @@ class Attachment implements Contracts\IAttachment
 
     public function download()
     {
-        if( $this->hasFilename() ) {
-            $outstream = fopen("php://output",'w');
-            fwrite($outstream, $this->attachment->content);
+        $downloadable = new DownloadableAttachment($this);
 
-            header($this->attachment->contentType);
-            header("Cache-Control: no-store, no-cache");
-            header('Content-Disposition: attachment; filename="'. $this->attachment->filename .'"');
-            
-            fclose($outstream);
-
-            die();
-        }
+        $downloadable->download();
     }
 
     public function filename()
@@ -47,7 +38,7 @@ class Attachment implements Contracts\IAttachment
     {
         return $this->attachment->content;
     }
-    
+
     /**
      * Alias of display. Uses the default xsl stylesheet
      * @throws Exceptions\StyleSheetNotFoundException
@@ -63,7 +54,7 @@ class Attachment implements Contracts\IAttachment
      * @return string|bool
      */
     public function display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cda.xsl')
-    { 
+    {
         $displayable = false;
 
         $content = '';
@@ -71,16 +62,16 @@ class Attachment implements Contracts\IAttachment
         if ( ! file_exists($path) ) {
             throw new Exceptions\StyleSheetNotFoundException(sprintf("The stylesheet %s could not be found", $path));
         }
-        
+
         try {
             $xsl = new \DOMDocument;
             $xsl->load($path);
-    
+
             $xml = simplexml_load_string($this->content());
-       
+
             $proc = new \XSLTProcessor;
             $proc->importStyleSheet($xsl); // attach the xsl rules
-    
+
             $content = $proc->transformToXML($xml);
 
             $displayable = true;

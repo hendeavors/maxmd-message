@@ -4,7 +4,9 @@ namespace Endeavors\MaxMD\Message\Contracts;
 
 interface IAttachment
 {
-    function view();
+    function filename();
 
-    function display($path = null);
+    function contentType();
+
+    function content();
 }

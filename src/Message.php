@@ -38,7 +38,7 @@ class Message implements Contracts\IMessageDetail
     {
         return new static($message, false);
     }
-    
+
     /**
      * We are creating a message so we dont have an id yet
      */
@@ -65,17 +65,17 @@ class Message implements Contracts\IMessageDetail
     public function Send()
     {
         if( $this->message->hasKey('sender') && $this->message->hasKey('htmlBody') && $this->message->hasKey('recipients') && $this->message->hasKey('body') ) {
-            // send the message 
+            // send the message
             if( $this->validateRecipients($this->message->get()['recipients']) ) {
 
                 $request = [
                     "authentication" => $this->user(),
                     "message" => $this->message->get()
                 ];
-        
+
                 $this->response = Client::DirectMessage()->Send(['sendRequest' => $request]);
             }
-    
+
             return $this;
         }
 
@@ -136,9 +136,9 @@ class Message implements Contracts\IMessageDetail
         }
 
         $newMessage = $this->message->get();
-        
+
         $newMessage['resources'] = $validResources;
-        
+
         $this->message = ModernArray::create($newMessage);
 
         return count($validResources) > 0;
@@ -146,7 +146,7 @@ class Message implements Contracts\IMessageDetail
 
     /**
      * Get a list of valid recipients
-     * 
+     *
      * @return array
      */
     protected function validateRecipients($recipients)
@@ -171,7 +171,7 @@ class Message implements Contracts\IMessageDetail
 
         return count($this->message->get()['recipients']) > 0;
     }
-    
+
     /**
      * Remove the recipient from the recipients list from the message
      * And set the message with a new recipients list
@@ -182,7 +182,7 @@ class Message implements Contracts\IMessageDetail
 
         foreach($recipients as $key => $value) {
             $email = is_object($value) ? $value->email : $value['email'];
-            
+
             if( $email === $recipient->email )
                 unset($recipients[$key]);
         }
