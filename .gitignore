@@ -1,6 +1,5 @@
 vendor/*
 composer.lock
-phpunit.xml
 tests/app/*
 tests/bootstrap/*
 tests/storage/*
