@@ -15,20 +15,11 @@ class ImapAttachment implements Contracts\IAttachment
         }
     }
 
-    public function download()
+    public function download(Contracts\IDownloadAttachment $downloader = null)
     {
-        if( $this->hasFilename() ) {
-            $outstream = fopen("php://output",'w');
-            fwrite($outstream, $this->attachment->content);
+        $downloadable = $downloader ?? new DownloadableAttachment($this);
 
-            header($this->attachment->contentType);
-            header("Cache-Control: no-store, no-cache");
-            header('Content-Disposition: attachment; filename="'. $this->attachment->filename .'"');
-            
-            fclose($outstream);
-
-            die();
-        }
+        $downloadable->download();
     }
 
     public function id()
@@ -62,7 +53,7 @@ class ImapAttachment implements Contracts\IAttachment
     {
         return $this->attachment->relativeFilePath;
     }
-    
+
     /**
      * Alias of display. Uses the default xsl stylesheet
      * @throws Exceptions\StyleSheetNotFoundException
@@ -70,45 +61,12 @@ class ImapAttachment implements Contracts\IAttachment
      */
     public function view()
     {
-        return $this->display();
+        return StandardCda::create($this);
     }
 
     public function mobileView()
     {
-        return $this->display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'mobilecda.xsl');
-    }
-
-    /**
-     * @throws Exceptions\StyleSheetNotFoundException
-     * @return string|bool
-     */
-    public function display($path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cda.xsl')
-    { 
-        $displayable = false;
-
-        $content = '';
-
-        if ( ! file_exists($path) ) {
-            throw new Exceptions\StyleSheetNotFoundException(sprintf("The stylesheet %s could not be found", $path));
-        }
-        
-        try {
-            $xsl = new \DOMDocument;
-            $xsl->load($path);
-    
-            $xml = simplexml_load_string($this->content());
-       
-            $proc = new \XSLTProcessor;
-            $proc->importStyleSheet($xsl); // attach the xsl rules
-    
-            $content = $proc->transformToXML($xml);
-
-            $displayable = true;
-        } catch(\ErrorException $ex) {
-            $displayable = false;
-        } finally {
-            return $displayable ? $content : $displayable;
-        }
+        return MobileCda::create($this);
     }
 
     public function hasFilename()
