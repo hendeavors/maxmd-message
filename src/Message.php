@@ -73,6 +73,10 @@ class Message implements Contracts\IMessageDetail
                     "message" => $this->message->get()
                 ];
 
+                if(count($this->binaryFilesList) > 0) {
+                    $request["attachmentList"] = $this->binaryFilesList;
+                }
+
                 $this->response = Client::DirectMessage()->Send(['sendRequest' => $request]);
             }
 
@@ -81,6 +85,24 @@ class Message implements Contracts\IMessageDetail
 
         // throw exception
         throw new Exceptions\InvalidMessageException("The message must have a sender, htmlBody true or false, and recipients");
+    }
+
+    protected $binaryFilesList = [];
+
+    public function addAttachment(string $filePath)
+    {
+        // public $id;
+    	// public $contentId;
+    	// public $name;
+    	// public $filePath;
+    	// public $disposition;
+        $outgoingFile = new Imap\OutgoingMailAttachment();
+        $outgoingFile->name = basename($filePath);
+        $outgoingFile->filePath = $filePath;
+        $outgoingFile->disposition = "attachment";
+        $this->binaryFilesList[] = (new BinaryFile(new ImapAttachment($outgoingFile)))->toArray();
+
+        return $this;
     }
 
     /**

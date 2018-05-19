@@ -2,6 +2,6 @@
 
 namespace Endeavors\MaxMD\Message\Imap;
 
-class IncomingMailAttachment extends \PhpImap\IncomingMailAttachment {
+class OutgoingMailAttachment extends IncomingMailAttachment {
     public $relativeFilePath;
 }

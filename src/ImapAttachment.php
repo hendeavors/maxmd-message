@@ -6,7 +6,7 @@ class ImapAttachment implements Contracts\IAttachment
 {
     protected $attachment;
 
-    public function __construct($response)
+    public function __construct(\PhpImap\IncomingMailAttachment $response)
     {
         $this->attachment = NullableAttachment::null();
 
@@ -36,7 +36,9 @@ class ImapAttachment implements Contracts\IAttachment
 
     public function contentType()
     {
-        return finfo_file($this->attachment->filePath);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        return finfo_file($finfo,$this->filePath());
     }
 
     public function content()

@@ -28,4 +28,13 @@ class BinaryFile implements Contracts\IBinaryFile
     {
         return $this->attachment->filename();
     }
+
+    public function toArray()
+    {
+        return [
+            "content" => $this->getContent(),
+            "contentType" => $this->getContentType(),
+            "filename" => $this->getFileName()
+        ];
+    }
 }
