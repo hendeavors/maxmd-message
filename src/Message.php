@@ -68,14 +68,16 @@ class Message implements Contracts\IMessageDetail
             // send the message
             if( $this->validateRecipients($this->message->get()['recipients']) ) {
 
-                $request = [
-                    "authentication" => $this->user(),
-                    "message" => $this->message->get()
-                ];
+                $message = $this->message->get();
 
                 if(count($this->binaryFilesList) > 0) {
-                    $request["attachmentList"] = $this->binaryFilesList;
+                    $message["attachmentList"] = $this->binaryFilesList;
                 }
+
+                $request = [
+                    "authentication" => $this->user(),
+                    "message" => $message
+                ];
 
                 $this->response = Client::DirectMessage()->Send(['sendRequest' => $request]);
             }
