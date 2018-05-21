@@ -43,7 +43,11 @@ class ImapAttachment implements Contracts\IAttachment
 
     public function content()
     {
-        return file_get_contents($this->attachment->filePath);
+        try {
+            return file_get_contents($this->attachment->filePath);
+        } catch(\ErrorException $e) {
+            throw new Exceptions\FileNotFoundException($e->getMessage());
+        }
     }
 
     public function filePath()

@@ -33,7 +33,6 @@ class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
-
         $response = Message::create([
             'sender' => 'freddie@healthendeavors.direct.eval.md',
             'htmlBody' => true,
@@ -52,7 +51,6 @@ class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
     public function testSendingMessageWithXmlFile()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-
 
         $response = Message::create([
             'sender' => 'freddie@healthendeavors.direct.eval.md',
@@ -73,7 +71,6 @@ class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
-
         $response = Message::create([
             'sender' => 'freddie@healthendeavors.direct.eval.md',
             'htmlBody' => true,
@@ -85,6 +82,29 @@ class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
         ])
         ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.xml")
         ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.txt")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
+    /**
+     * @expectedException \Endeavors\MaxMD\Message\Exceptions\FileNotFoundException
+     */
+    public function testSendingMessageWithBadFilePath()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "badfile.xml")
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "badfile.txt")
         ->Send();
 
         $this->assertTrue($response->success);
