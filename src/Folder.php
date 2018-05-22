@@ -224,7 +224,6 @@ class Folder implements IFolder
             $mail = $mailbox->getMail($mailid);
 
             foreach($mail->getAttachments() as $mailAttachment) {
-                dd($mailAttachment);
                 $attachment = new ImapAttachment($mailAttachment);
 
                 $attachments[] = [
