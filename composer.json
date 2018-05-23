@@ -17,6 +17,7 @@
         }
     ],
     "require": {
+        "php": ">=7.0",
         "endeavors/maxmd-support": "dev-develop as 0.1.0",
         "endeavors/support-vo": "^2.0",
         "endeavors/sqlserver-moment": "1.0.*@dev",
