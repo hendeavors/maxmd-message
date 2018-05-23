@@ -28,7 +28,7 @@ class MobileCda implements Contracts\IViewAttachment
         return new static(new XslRenderer(static::STYLE_SHEET_PATH), new XmlAttachment(new PlainAttachment($response)));
     }
 
-    public function view()
+    public function view(): string
     {
         $displayable = false;
 
@@ -46,5 +46,10 @@ class MobileCda implements Contracts\IViewAttachment
         } finally {
             return $displayable ? $content : $displayable;
         }
+    }
+
+    public function __toString()
+    {
+        return $this->view();
     }
 }

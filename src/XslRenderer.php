@@ -43,6 +43,8 @@ class XslRenderer implements Contracts\IRenderer
         $proc->importStyleSheet($xsl); // attach the xsl rules
 
         $content = $proc->transformToXML($xml);
+
+        return $content;
     }
 
     public function setRenderingContent($content)
