@@ -40,7 +40,7 @@ class MobileCda implements Contracts\IViewAttachment
         } catch(\ErrorException $ex) {
             // utilize some sort of logger or callback for the developer?
         } finally {
-            return $content;
+            return null === $content ? '' : $content;
         }
     }
 
