@@ -30,8 +30,6 @@ class MobileCda implements Contracts\IViewAttachment
 
     public function view(): string
     {
-        $displayable = false;
-
         $content = '';
 
         try {
@@ -39,12 +37,10 @@ class MobileCda implements Contracts\IViewAttachment
             ->renderer
             ->setRenderingContent($this->attachment->view())
             ->render();
-
-            $displayable = true;
         } catch(\ErrorException $ex) {
-            $displayable = false;
+            // utilize some sort of logger or callback for the developer?
         } finally {
-            return $displayable ? $content : $displayable;
+            return $content;
         }
     }
 
