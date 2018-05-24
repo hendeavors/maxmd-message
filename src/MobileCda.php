@@ -21,7 +21,7 @@ class MobileCda implements Contracts\IViewAttachment
     /**
      * We'll use the default mobile cda path in this factory creation
      * @param  [type] $response - the response from retrieving a mailbox attachment
-     * @return [type]           [description]
+     * @return Contracts\IViewAttachment
      */
     public static function create($response)
     {
