@@ -10,15 +10,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/hendeavors/maxmd-support.git"
-        }
-    ],
     "require": {
         "php": ">=7.0",
-        "endeavors/maxmd-support": "dev-develop as 0.1.0",
+        "endeavors/maxmd-support": "^1.0",
         "endeavors/support-vo": "^2.0",
         "endeavors/sqlserver-moment": "1.0.*@dev",
         "ext-xsl": "*",
@@ -39,7 +33,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "3.0.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }
