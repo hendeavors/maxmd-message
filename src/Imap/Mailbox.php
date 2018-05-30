@@ -8,7 +8,7 @@ use Endeavors\MaxMD\Message\Exceptions\Imap;
 
 class Mailbox extends \PhpImap\Mailbox
 {
-    public function searchMailbox($criteria = 'ALL') 
+    public function searchMailbox($criteria = 'ALL')
     {
         try {
             return parent::searchMailbox($criteria);
@@ -40,7 +40,7 @@ class Mailbox extends \PhpImap\Mailbox
 
 		return $mail;
     }
-    
+
     protected function initMailPart(IncomingMail $mail, $partStructure, $partNum, $markAsSeen = true) {
 		$options = FT_UID;
 		if(!$markAsSeen) {
@@ -86,7 +86,7 @@ class Mailbox extends \PhpImap\Mailbox
 			}
 		}
 
-		$isAttachment = $partStructure->ifid || isset($params['filename']) || isset($params['name']);
+		$isAttachment = isset($params['filename']);
 
 		// ignore contentId on body when mail isn't multipart (https://github.com/barbushin/php-imap/issues/71)
 		if(!$partNum && TYPETEXT === $partStructure->type) {
@@ -96,14 +96,9 @@ class Mailbox extends \PhpImap\Mailbox
 		if($isAttachment) {
 			$attachmentId = sha1($mail->id . $params['filename']);
 
-			if(empty($params['filename']) && empty($params['name'])) {
-				$fileName = $attachmentId . '.' . strtolower($partStructure->subtype);
-			}
-			else {
-				$fileName = !empty($params['filename']) ? $params['filename'] : $params['name'];
-				$fileName = $this->decodeMimeStr($fileName, $this->serverEncoding);
-				$fileName = $this->decodeRFC2231($fileName, $this->serverEncoding);
-			}
+			$fileName = $params['filename'];
+			$fileName = $this->decodeMimeStr($fileName, $this->serverEncoding);
+			$fileName = $this->decodeRFC2231($fileName, $this->serverEncoding);
 
 			$attachment = new IncomingMailAttachment();
 			$attachment->id = $attachmentId;
@@ -118,9 +113,9 @@ class Mailbox extends \PhpImap\Mailbox
 					'/(^_)|(_$)/' => '',
 				];
                 $fileSysName = preg_replace('~[\\\\/]~', '', $mail->id . '_' . $attachmentId . '_' . preg_replace(array_keys($replace), $replace, $fileName));
-                
+
                 $this->makeMailAttachmentDirectory($mail);
-                
+
                 $attachment->relativeFilePath = DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
                 $attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
@@ -130,7 +125,7 @@ class Mailbox extends \PhpImap\Mailbox
                     // todo test
                     $attachment->relativeFilePath = substr($attachment->relativeFilePath, 0, strlen($attachment->relativeFilePath) - 1 - strlen($ext)) . "." . $ext;
                 }
-                    
+
                 // if the directory exists, we no longer need to place a new file
                 // as once a message is created it exists until being purged
                 // only write to the file if it doesnt exist
@@ -167,7 +162,7 @@ class Mailbox extends \PhpImap\Mailbox
 			}
 		}
     }
-    
+
     /**
      * @return Boolean
      */
