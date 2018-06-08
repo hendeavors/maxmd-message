@@ -125,6 +125,46 @@ class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
         $this->assertTrue($response->success);
     }
 
+    public function testSendingMessagePngFileWithCustomFileName()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->setFileName('Your profile picture')
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "somepng.png")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
+    public function testSendingMessageCustomFileNameWithReallyLongFileName()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->setFileName('A long file name')
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "somereallyreallyreallyreallyreallyreallyreallyreallyreallylongfilename.txt")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
     /**
      * @expectedException \Endeavors\MaxMD\Message\Exceptions\FileNotFoundException
      */

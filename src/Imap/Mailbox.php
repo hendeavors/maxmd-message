@@ -123,7 +123,7 @@ class Mailbox extends \PhpImap\Mailbox
                     $ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
                     $attachment->filePath = substr($attachment->filePath, 0, 255 - 1 - strlen($ext)) . "." . $ext;
                     // todo test
-                    $attachment->relativeFilePath = substr($attachment->relativeFilePath, 0, strlen($attachment->relativeFilePath) - 1 - strlen($ext)) . "." . $ext;
+                    $attachment->relativeFilePath = str_replace($this->attachmentsDir, '', $attachment->filePath);
                 }
 
                 // if the directory exists, we no longer need to place a new file

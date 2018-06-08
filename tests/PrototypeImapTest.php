@@ -53,6 +53,24 @@ class PrototypeImapTest extends \Orchestra\Testbench\TestCase
         }
 
         $this->assertInstanceOf(Attachments::class, $attachments);
+
+        User::freshLogin("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $folder = Folder::create("inbox");
+
+        $attachments = $folder->attachments();
+
+        foreach($attachments->get() as $attachment) {
+            $this->assertNotNull($attachment['attachment']->view());
+        }
+
+        $attachments = $folder->imapAttachments();
+
+        foreach($attachments->get() as $attachment) {
+            $this->assertNotNull($attachment['attachment']->view());
+        }
+
+        $this->assertInstanceOf(Attachments::class, $attachments);
     }
 
     public function tearDown()
