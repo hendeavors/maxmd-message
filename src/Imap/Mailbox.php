@@ -119,12 +119,11 @@ class Mailbox extends \PhpImap\Mailbox
                 $attachment->relativeFilePath = DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
                 $attachment->filePath = $this->attachmentsDir . DIRECTORY_SEPARATOR . $mail->id . DIRECTORY_SEPARATOR . $fileSysName;
 
-                if(strlen($attachment->filePath) > 255) {
-                    $ext = pathinfo($attachment->filePath, PATHINFO_EXTENSION);
-                    $attachment->filePath = substr($attachment->filePath, 0, 255 - 1 - strlen($ext)) . "." . $ext;
-                    // todo test
-                    $attachment->relativeFilePath = substr($attachment->relativeFilePath, 0, strlen($attachment->relativeFilePath) - 1 - strlen($ext)) . "." . $ext;
-                }
+                $filePathTransformer = new \Endeavors\MaxMD\Message\FileSystem\WindowsFilePathTransformer($attachment->filePath, $this->attachmentsDir);
+                $filePathTransformer->transform();
+
+                $attachment->relativeFilePath = $filePathTransformer->getRelativeFilePath() ?? $attachment->relativeFilePath;
+                $attachment->filePath = $filePathTransformer->getFilePath();
 
                 // if the directory exists, we no longer need to place a new file
                 // as once a message is created it exists until being purged

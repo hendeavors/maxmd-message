@@ -17,6 +17,8 @@ class Message implements Contracts\IMessageDetail
 
     protected $strict = false;
 
+    private $attachmentFileName;
+
     private function __construct($message, $strict = false)
     {
         $this->strict = $strict;
@@ -98,13 +100,27 @@ class Message implements Contracts\IMessageDetail
     	// public $name;
     	// public $filePath;
     	// public $disposition;
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
         $outgoingFile = new Imap\OutgoingMailAttachment();
-        $outgoingFile->name = basename($filePath);
+        $outgoingFile->name = $this->getFileName() ?? basename($filePath, '.' . $extension);// . '.' . $extension;
+        $outgoingFile->name .= '.' . $extension;
         $outgoingFile->filePath = $filePath;
         $outgoingFile->disposition = "attachment";
         $this->binaryFilesList[] = (new BinaryFile(new ImapAttachment($outgoingFile)))->toArray();
 
         return $this;
+    }
+
+    public function setFileName(string $fileName)
+    {
+        $this->attachmentFileName = $fileName;
+
+        return $this;
+    }
+
+    public function getFileName()
+    {
+        return $this->attachmentFileName;
     }
 
     /**
