@@ -13,11 +13,11 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/hendeavors/maxmd-support.git"
+            "url": "https://github.com/bpedroza/maxmd-support.git"
         }
     ],
     "require": {
-        "endeavors/maxmd-support": "dev-master",
+        "endeavors/maxmd-support": "developer-options-dev",
         "endeavors/support-vo": "1.2.*@dev",
         "endeavors/sqlserver-moment": "1.0.*@dev"
     },
@@ -32,7 +32,7 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "3.2.*"
+        "phpunit/phpunit": "^7.0"
     },
     "extra": {
         "branch-alias": {

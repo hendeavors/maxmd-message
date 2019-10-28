@@ -6,19 +6,14 @@ use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 use Endeavors\MaxMD\Message\MessageDetail;
 
-class MessageViewTest extends \Orchestra\Testbench\TestCase
+class MessageViewTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testViewingSingleMessageFromInbox()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
-        
+
         // freddie has emails in his inbox
 
         $message = $folder->Messages()->View(1);
@@ -41,9 +36,9 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testViewingMessagesFromInbox()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
-        
+
         // freddie has emails in his inbox
 
         $folder->Messages()->All();
@@ -52,25 +47,25 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testPagingMessagesFromInbox()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
-        
+
         // freddie has emails in his inbox
 
         $items = $folder->Messages()->Paginate();
 
         $this->assertTrue(is_array($items->paginate()));
     }
-    
+
     /**
      * at the time of this test we had 11 messages
      */
     public function testPagingNavigationMessagesFromInbox()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
-        
+
         // freddie has emails in his inbox
 
         $items = $folder->Messages()->Paginate(3);
@@ -78,7 +73,7 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
         $this->assertTrue(is_array($items->paginate()));
 
         $this->assertEquals(3, count($items->paginate()));
-        
+
         // assuming the message never gets deleted
         $itemThree = $items->paginate()[2];
 
@@ -93,14 +88,14 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
         // assuming the uid is unique
         $this->assertNotEquals($itemThree->uid, $secondItemThree->uid);
     }
-    
+
     /**
      * confirmed via ui
      */
     public function testMarkingMessageAsRead()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
 
         $message = $folder->Messages()->View(3);
@@ -111,7 +106,7 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testViewingNonExistingMessage()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox");
 
         $message = $folder->Messages()->View(999999);
@@ -121,16 +116,16 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
         $this->assertNotNull($message->sender);
 
         $message = $folder->Messages()->View(-1);
-        
+
         $this->assertInstanceOf(MessageDetail::class, $message);
-        
+
         $this->assertNotNull($message->sender);
     }
 
     public function testViewingMessagesInfolderWithNoMessages()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox.Spam");
 
         $message = $folder->Messages()->All();
@@ -139,7 +134,7 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testViewingSentFolder()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("Inbox.Sent");
 
         $messageCount = $folder->Messages()->Count();
@@ -150,7 +145,7 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testViewingSentFolderOfLowerCaseArgument()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("inbox.sent");
 
         $messageCount = $folder->Messages()->Count();
@@ -161,13 +156,13 @@ class MessageViewTest extends \Orchestra\Testbench\TestCase
     public function testViewingSentFolderOfLowerCaseArgumentSingleWord()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
-        
+
         $folder = Folder::create("dumb");
 
         $messageCount = $folder->Messages()->Count();
 
         $folder = Folder::create("sent");
-        
+
         $messageCount = $folder->Messages()->Count();
     }
 }

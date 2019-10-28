@@ -5,13 +5,9 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 
-class CreateFolderExceptionTest extends \Orchestra\Testbench\TestCase
+class CreateFolderExceptionTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
+
     /**
      * @expectedException \Endeavors\MaxMD\Message\Exceptions\ReservedFolderException
      */

@@ -4,13 +4,8 @@ namespace Endeavors\MaxMD\Message\Tests;
 
 use Endeavors\MaxMD\Message\User;
 
-class UserCreationTest extends \Orchestra\Testbench\TestCase
+class UserCreationTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testValidUserCreation()
     {
         $user = User::login("username", "password");
@@ -39,7 +34,7 @@ class UserCreationTest extends \Orchestra\Testbench\TestCase
 
 
     }
-    
+
     /**
      * @expectedException \Endeavors\MaxMD\Message\Exceptions\InvalidUserException
      * @expectedExceptionMessage You must login prior to using the direct messaging api.

@@ -5,7 +5,7 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 
-class MoveMessageTest extends \Orchestra\Testbench\TestCase
+class MoveMessageTest extends TestCase
 {
     public function setUp()
     {
@@ -69,7 +69,7 @@ class MoveMessageTest extends \Orchestra\Testbench\TestCase
     }
 
     public function tearDown()
-    {        
+    {
         parent::tearDown();
     }
 }
