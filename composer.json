@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "endeavors/maxmd-support": "developer-options-dev",
+        "endeavors/maxmd-support": "dev-developer-options",
         "endeavors/support-vo": "^2.0",
         "endeavors/sqlserver-moment": "1.0.*@dev"
     },
