@@ -10,14 +10,8 @@
         }
     ],
     "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/bpedroza/maxmd-support.git"
-        }
-    ],
     "require": {
-        "endeavors/maxmd-support": "dev-developer-options",
+        "endeavors/maxmd-support": "~1.4.0",
         "endeavors/support-vo": "^2.0",
         "endeavors/sqlserver-moment": "1.0.*@dev"
     },
