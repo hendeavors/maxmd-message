@@ -5,13 +5,8 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 
-class DeleteFolderTest extends \Orchestra\Testbench\TestCase
+class DeleteFolderTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testDeletionOfFolder()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");

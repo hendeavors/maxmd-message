@@ -5,13 +5,8 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Message;
 
-class MessageSendTest extends \Orchestra\Testbench\TestCase
+class MessageSendTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testSendingMessageToInsideEmail()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
@@ -28,7 +23,7 @@ class MessageSendTest extends \Orchestra\Testbench\TestCase
 
         $this->assertTrue($response->success);
     }
-    
+
     /**
      * Message::create defaults to loose
      */
@@ -68,7 +63,7 @@ class MessageSendTest extends \Orchestra\Testbench\TestCase
 
         $this->assertFalse($response->success);
     }
-    
+
     /**
      * Loose mode removes the bad recipients
      */
@@ -111,7 +106,7 @@ class MessageSendTest extends \Orchestra\Testbench\TestCase
 
         $this->assertFalse($response->success);
     }
-    
+
     /**
      * We should have a success response in loose mode with one valid email
      */
@@ -136,7 +131,7 @@ class MessageSendTest extends \Orchestra\Testbench\TestCase
     }
 
     public function tearDown()
-    {        
+    {
         parent::tearDown();
     }
 }

@@ -4,7 +4,7 @@ namespace Endeavors\MaxMD\Message\Tests;
 
 use Endeavors\MaxMD\Message\Paginator;
 
-class PaginatorTest extends \Orchestra\Testbench\TestCase
+class PaginatorTest extends TestCase
 {
     protected $items;
 

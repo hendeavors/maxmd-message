@@ -5,13 +5,8 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 
-class CreateFolderTest extends \Orchestra\Testbench\TestCase
+class CreateFolderTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testCreationOfFolder()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
@@ -34,7 +29,7 @@ class CreateFolderTest extends \Orchestra\Testbench\TestCase
         $this->assertTrue($response->success);
 
         $response = $folder->Make()->ToObject();
-        
+
         $this->assertFalse($response->success);
     }
 }

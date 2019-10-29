@@ -5,13 +5,8 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Folder;
 
-class RenameFolderTest extends \Orchestra\Testbench\TestCase
+class RenameFolderTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testRenamingOfFolder()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
