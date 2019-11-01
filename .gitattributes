@@ -3,3 +3,5 @@
 phpunit.xml export-ignore
 CONTRIBUTING.md export-ignore
 /tests export-ignore
+*.xsl linguist-vendored
+*.xml linguist-vendored
