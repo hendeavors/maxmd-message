@@ -48,7 +48,7 @@ class Folder implements IFolder
     public function MoveMessages($uids, IFolder $folder)
     {
         $fromFolder = $this->get();
-        
+
         if( ModernString::create($fromFolder)->toLower() !== "inbox" && false === ModernString::create($fromFolder)->toLower()->position("inbox") ) {
             // if we do not have the inbox and we do not have a prefix
             $fromFolder = "Inbox." . $fromFolder;
@@ -60,19 +60,19 @@ class Folder implements IFolder
             // if we do not have the inbox and we do not have a prefix
             $toFolder = "Inbox." . $toFolder;
         }
-        
+
         $request = [
             "auth" => $this->user(),
             "folderName" => $fromFolder,
             "destFolderName" => $toFolder,
             "uids" => $uids
         ];
-        
+
         $this->response = Client::DirectMessage()->MoveMessagesByUID($request);
 
         return $this;
     }
-    
+
     /**
      * @throws Exceptions\InvalidUserException
      */
@@ -89,7 +89,7 @@ class Folder implements IFolder
 
         return $this;
     }
-    
+
     /**
      * @param closure - allow the developer to perform actions before everything is deleted
      * @throws Exceptions\InvalidUserException
@@ -103,19 +103,19 @@ class Folder implements IFolder
         if( null !== $callBack ) {
             $callBack($that);
         }
-        
+
         $request = [
             "auth" => $this->user(),
             "folderName" => "INBOX." . $this->get()
         ];
-        
+
         $this->response = Client::DirectMessage()->DeleteFolder($request);
 
         return $this;
     }
 
     public function Rename(IFolder $folder)
-    {   
+    {
         $this->validateReservedFolders();
 
         $request = [
@@ -123,37 +123,45 @@ class Folder implements IFolder
             "folderName" => "INBOX." . $this->get(),
             "newFolderName" => "INBOX." . $folder->get()
         ];
-        
+
         $this->response = Client::DirectMessage()->MoveFolder($request);
 
         return $this;
     }
-    
+
     /**
      * for now prefix with "INBOX" to see messages of another folder
      */
-    public function Messages()
-    {   
-        $folder = strtolower($this->get());
+    public function Messages($dir = null)
+    {
+        $folder = $this->formatFolder();
 
-        $fqFolderName = explode('.', $folder);
+        $mailbox = Imap\Connection::make($folder);
 
-        $names = [];
-
-        foreach($fqFolderName as $fqName) {
-            $names[] = ucfirst($fqName);
+        if( null !== $dir && is_dir($dir) ) {
+            $mailbox = Imap\Connection::make($folder, $dir);
         }
 
-        $folder = implode('.', $names);
+        // Read all messaged into an array:
+        $mailsIds = $mailbox->searchMailbox('ALL');
 
-        $request = [
-            "auth" => $this->user(),
-            "folderName" => $folder
-        ];
-        
-        $this->response = Client::DirectMessage()->GetMessages($request);
+        if(!$mailsIds) {
+            //die('Mailbox is empty');
+        }
 
-        return Messages::create($this->ToObject());
+        $mail = [];
+
+        // Get the first message and save its attachment(s) to disk:
+        foreach($mailsIds as $mailid) {
+
+            $message = $mailbox->getMail($mailid);
+
+            $message->folder = $folder;
+
+            $mail['messages'][] = $message;
+        }
+
+        return Messages::create((object)$mail);
     }
 
     public function UnreadMessages()
@@ -162,9 +170,9 @@ class Folder implements IFolder
             "auth" => $this->user(),
             "folderName" => $this->get()
         ];
-        
+
         $this->response = Client::DirectMessage()->GetUnreadMessages($request);
-        
+
         return Messages::create($this->ToObject());
     }
 
@@ -174,7 +182,7 @@ class Folder implements IFolder
             "auth" => $this->user(),
             "folderName" => $this->get()
         ];
-        
+
         $this->response = Client::DirectMessage()->GetUnreadMessageCount($request);
 
         $result = $this->ToObject();
@@ -182,8 +190,53 @@ class Folder implements IFolder
         if( ! property_exists($result, 'count') ) {
             return 0;
         }
-        
+
         return $this->ToObject()->count;
+    }
+
+    /**
+     *
+     * deprecated
+     */
+    public function imapAttachments($dir = __DIR__)
+    {
+        return $this->attachments($dir);
+    }
+
+    /**
+     * @return attachments
+     */
+    public function attachments($dir = __DIR__)
+    {
+        $attachments = [];
+
+        $mailbox = Imap\Connection::make($this->formatFolder(), $dir);
+        // Read all messaged into an array:
+        $mailsIds = $mailbox->searchMailbox('ALL');
+
+        if(!$mailsIds) {
+            //die('Mailbox is empty');
+        }
+
+        // Get the first message and save its attachment(s) to disk:
+        foreach($mailsIds as $mailid) {
+
+            $mail = $mailbox->getMail($mailid);
+
+            foreach($mail->getAttachments() as $mailAttachment) {
+                $attachment = new ImapAttachment($mailAttachment);
+
+                $attachments[] = [
+                    'attachment' => $attachment,
+                    'attachmentArray' => $attachment->toArray(),
+                    'sender' => $mail->headers->fromaddress
+                ];
+            }
+        }
+
+        $attachments = new Attachments(ModernArray::create($attachments));
+
+        return $attachments;
     }
 
     public function ToObject()
@@ -193,7 +246,7 @@ class Folder implements IFolder
                 'success' => false
             ]));
         }
-        
+
         return $this->Raw()->return;
     }
 
@@ -204,7 +257,12 @@ class Folder implements IFolder
 
     public function get()
     {
-        return $this->folder;
+        return $this->formatFolder();
+    }
+
+    public function all()
+    {
+        return Imap\Connection::make()->getListingFolders($pattern = '*');
     }
 
     public function __toString()
@@ -220,5 +278,20 @@ class Folder implements IFolder
             'Drafts',
             'Spam'
         ]);
+    }
+
+    private function formatFolder()
+    {
+        $folder = strtolower($this->folder);
+
+        $fqFolderName = explode('.', $folder);
+
+        $names = [];
+
+        foreach($fqFolderName as $fqName) {
+            $names[] = ucfirst($fqName);
+        }
+
+        return implode('.', $names);
     }
 }

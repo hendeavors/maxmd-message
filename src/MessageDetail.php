@@ -19,15 +19,16 @@ class MessageDetail implements Contracts\IMessageDetail
         if( ! is_object($message) || $message === null ) {
             $this->message = static::null();
         }
-
-        if( null !== $this->message ) {
-            $this->markRead();
-        }
     }
 
     public static function null()
     {
         return new NullableMessageDetail();
+    }
+
+    public function originalMessage()
+    {
+        return $this->message;
     }
 
     public function uid()
@@ -37,17 +38,17 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function id()
     {
-        return $this->message->uid;
+        return $this->message->id;
     }
 
     public function sender()
     {
-        return $this->message->sender;
+        return $this->message->headers->fromaddress;
     }
 
     public function body()
     {
-        return $this->message->body;
+        return $this->message->textHtml;
     }
 
     public function text()
@@ -58,6 +59,10 @@ class MessageDetail implements Contracts\IMessageDetail
     public function subject()
     {
         try {
+            if( null === $this->message->subject ) {
+                return '(no subject)';
+            }
+
             return $this->message->subject;
         } catch(\Exception $ex) {
             return '(no subject)';
@@ -78,13 +83,13 @@ class MessageDetail implements Contracts\IMessageDetail
     {
         if( null === $this->message ) {
             return new \DateTime('now');
-        } elseif( null === $this->message->receivedDate ) {
+        } elseif( null === $this->message->date ) {
             return new \DateTime('now');
-        } elseif(is_object($this->message->receivedDate)) {
-            return $this->message->receivedDate;
+        } elseif(is_object($this->message->date)) {
+            return $this->message->date;
         } 
 
-        return new \DateTime($this->message->receivedDate);
+        return new \DateTime($this->message->date);
     }
     
     /**
@@ -94,11 +99,11 @@ class MessageDetail implements Contracts\IMessageDetail
      */
     public function sentDate()
     {
-        if(is_object($this->message->sentDate)) {
-            return $this->message->sentDate;
+        if(is_object($this->message->date)) {
+            return $this->message->date;
         } 
 
-        return new \DateTime($this->message->sentDate);
+        return new \DateTime($this->message->date);
     }
     
     /**
@@ -152,16 +157,37 @@ class MessageDetail implements Contracts\IMessageDetail
 
     public function hasAttachments()
     {
-        return $this->attachments->count() > 0;
+        return count($this->message->getAttachments()) > 0;
     }
-
+    
+    /**
+     * deprecated
+     */
     public function attachments()
     {
         $attachments = [];
+
+        $attachmentAttributes = [];
+
+        $attributesToFill = [
+            'content',
+            'contentType',
+            'filename'
+        ];
         
-        if( isset($this->message->attachmentList) ) {
-            foreach(ModernArray::create($this->message->attachmentList)->get() as $attachment) {
-                $attachments[] = new Attachment($attachment);
+        if( isset($this->message->attachments) ) {
+            foreach(ModernArray::create($this->message->attachments)->get() as $attachment) {
+                if( is_string($attachment) ) {
+                    
+                    $attachmentAttributes[] = $attachment;
+                } else {
+                    $attachments[] = new Attachment($attachment);
+                }
+
+                if( count($attachmentAttributes) == 3 ) {
+                    $attachment = array_combine($attributesToFill, $attachmentAttributes);
+                    $attachments[] = new Attachment((object)$attachment);
+                }
             }
         }
 
@@ -188,7 +214,7 @@ class MessageDetail implements Contracts\IMessageDetail
         }
     }
 
-    protected function markRead()
+    public function markRead()
     {
         $request = [
             "auth" => $this->user(),
@@ -274,7 +300,7 @@ class NullableMessageDetail extends MessageDetail
         return new \DateTime('now');
     }
 
-    final protected function markRead()
+    final public function markRead()
     {
 
     }

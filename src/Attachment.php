@@ -17,18 +17,9 @@ class Attachment implements Contracts\IAttachment
 
     public function download()
     {
-        if( $this->hasFilename() ) {
-            $outstream = fopen("php://output",'w');
-            fwrite($outstream, $this->attachment->content);
+        $downloadable = new DownloadableAttachment($this);
 
-            header($this->attachment->contentType);
-            header("Cache-Control: no-store, no-cache");
-            header('Content-Disposition: attachment; filename="'. $this->attachment->filename .'"');
-            
-            fclose($outstream);
-
-            die();
-        }
+        $downloadable->download();
     }
 
     public function filename()
@@ -46,6 +37,16 @@ class Attachment implements Contracts\IAttachment
     public function content()
     {
         return $this->attachment->content;
+    }
+
+    /**
+     * Alias of display. Uses the default xsl stylesheet
+     * @throws Exceptions\StyleSheetNotFoundException
+     * @return string
+     */
+    public function view()
+    {
+        return StandardCda::create($this->attachment);
     }
 
     public function hasFilename()
