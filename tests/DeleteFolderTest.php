@@ -7,14 +7,32 @@ use Endeavors\MaxMD\Message\Folder;
 
 class DeleteFolderTest extends TestCase
 {
-    public function testDeletionOfFolder()
+    public function setUp()
     {
+        parent::setUp();
+
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
+        $folder = Folder::create("Some.Folder");
+
+        $folder->Make();
+    }
+
+    public function testDeletionOfFolder()
+    {
         $folder = Folder::create("Some.Folder");
 
         $response = $folder->Delete()->ToObject();
 
         $this->assertTrue($response->success);
+    }
+
+    public function tearDown()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $folder = Folder::create("Some.Folder");
+
+        $folder->Delete();
     }
 }

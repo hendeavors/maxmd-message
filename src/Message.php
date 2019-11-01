@@ -15,8 +15,6 @@ class Message implements Contracts\IMessageDetail
 
     protected $response;
 
-    protected $succeeds = false;
-
     protected $strict = false;
 
     private function __construct($message, $strict = false)
@@ -40,7 +38,7 @@ class Message implements Contracts\IMessageDetail
     {
         return new static($message, false);
     }
-    
+
     /**
      * We are creating a message so we dont have an id yet
      */
@@ -67,17 +65,23 @@ class Message implements Contracts\IMessageDetail
     public function Send()
     {
         if( $this->message->hasKey('sender') && $this->message->hasKey('htmlBody') && $this->message->hasKey('recipients') && $this->message->hasKey('body') ) {
-            // send the message 
+            // send the message
             if( $this->validateRecipients($this->message->get()['recipients']) ) {
+
+                $message = $this->message->get();
+
+                if(count($this->binaryFilesList) > 0) {
+                    $message["attachmentList"] = $this->binaryFilesList;
+                }
 
                 $request = [
                     "authentication" => $this->user(),
-                    "message" => $this->message->get()
+                    "message" => $message
                 ];
-        
+
                 $this->response = Client::DirectMessage()->Send(['sendRequest' => $request]);
             }
-    
+
             return $this;
         }
 
@@ -85,12 +89,54 @@ class Message implements Contracts\IMessageDetail
         throw new Exceptions\InvalidMessageException("The message must have a sender, htmlBody true or false, and recipients");
     }
 
-    public function PatientFHIRQuery ( )
+    protected $binaryFilesList = [];
+
+    public function addAttachment(string $filePath)
     {
-        $request = [
-            "auth" => $this->user(),
-            "query" => []
-        ];
+        // public $id;
+    	// public $contentId;
+    	// public $name;
+    	// public $filePath;
+    	// public $disposition;
+        $outgoingFile = new Imap\OutgoingMailAttachment();
+        $outgoingFile->name = basename($filePath);
+        $outgoingFile->filePath = $filePath;
+        $outgoingFile->disposition = "attachment";
+        $this->binaryFilesList[] = (new BinaryFile(new ImapAttachment($outgoingFile)))->toArray();
+
+        return $this;
+    }
+
+    /**
+     * @throws Endeavors\MaxMD\Message\Exceptions\InvalidFHIRQueryException, Endeavors\MaxMD\Message\Exceptions\InvalidResourceException
+     */
+    public function SendFHIRQuery()
+    {
+        if( $this->message->hasKey('resources') && $this->message->hasKey('recipients') ) {
+
+            if( $this->validateRecipients($this->message->get()['recipients']) && $this->validateResources($this->message->get()['resources']) ) {
+
+                $request = [
+                    "auth" => $this->user(),
+                    "query" => [
+                        "recipients" => $this->message->get()['recipients'],
+                        "resources" => $this->message->get()['resources'],
+                        "subject" => '(no subject)'
+                    ]
+                ];
+
+                if( $this->message->hasKey('subject') ) {
+                    $request['query']['subject'] = $this->message->get()['subject'];
+                }
+
+                $this->response = Client::DirectMessage()->PatientFHIRQuery($request);
+
+                return $this;
+            }
+        }
+
+        // throw exception
+        throw new Exceptions\InvalidFHIRQueryException("The FHIR Query must have recipients and resources");
     }
 
     public function Success()
@@ -98,9 +144,33 @@ class Message implements Contracts\IMessageDetail
         return null !== $this->response ? $this->response->return->success : false;
     }
 
+    public function message()
+    {
+        return null !== $this->response ? $this->response->return->message : "Something went wrong sending your message";
+    }
+
+    protected function validateResources($resources)
+    {
+        $validResources = [];
+
+        foreach($resources as $resource) {
+            $newResource = FHIRResourceType::create($resource);
+
+            $validResources[] = $newResource->toArray();
+        }
+
+        $newMessage = $this->message->get();
+
+        $newMessage['resources'] = $validResources;
+
+        $this->message = ModernArray::create($newMessage);
+
+        return count($validResources) > 0;
+    }
+
     /**
      * Get a list of valid recipients
-     * 
+     *
      * @return array
      */
     protected function validateRecipients($recipients)
@@ -126,12 +196,18 @@ class Message implements Contracts\IMessageDetail
         return count($this->message->get()['recipients']) > 0;
     }
 
+    /**
+     * Remove the recipient from the recipients list from the message
+     * And set the message with a new recipients list
+     */
     protected function removeRecipient($recipient)
     {
         $recipients = $this->message->get()['recipients'];
 
         foreach($recipients as $key => $value) {
-            if( $value['email'] === $recipient->email )
+            $email = is_object($value) ? $value->email : $value['email'];
+
+            if( $email === $recipient->email )
                 unset($recipients[$key]);
         }
 

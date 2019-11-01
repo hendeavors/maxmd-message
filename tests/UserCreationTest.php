@@ -31,8 +31,39 @@ class UserCreationTest extends TestCase
     public function testUserCreationWithMissingPassword()
     {
         $user = User::login("username", "");
+    }
 
+    public function testSingleLogin()
+    {
+        User::login("same", "user");
 
+        $this->assertEquals(User::getInstance()->getUsername(), "same");
+
+        User::login("different", "another");
+
+        $this->assertEquals(User::getInstance()->getUsername(), "same");
+    }
+
+    public function testLoginThenFreshLogin()
+    {
+        User::login("same", "user");
+
+        $this->assertEquals(User::getInstance()->getUsername(), "same");
+
+        User::freshLogin("different", "user");
+
+        $this->assertEquals(User::getInstance()->getUsername(), "different");
+    }
+
+    public function testFreshLogin()
+    {
+        User::freshLogin("same", "user");
+        
+        $this->assertEquals(User::getInstance()->getUsername(), "same");
+        
+        User::freshLogin("different", "user");
+        
+        $this->assertEquals(User::getInstance()->getUsername(), "different");
     }
 
     /**

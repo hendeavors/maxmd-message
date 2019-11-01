@@ -11,9 +11,12 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": ">=7.0",
         "endeavors/maxmd-support": "~1.4.0",
         "endeavors/support-vo": "^2.0",
-        "endeavors/sqlserver-moment": "1.0.*@dev"
+        "endeavors/sqlserver-moment": "1.0.*@dev",
+        "ext-xsl": "*",
+        "php-imap/php-imap": "3.0.10"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +33,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }

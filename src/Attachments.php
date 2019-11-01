@@ -2,7 +2,9 @@
 
 namespace Endeavors\MaxMD\Message;
 
-class Attachments implements Contracts\IAttachment
+use Endeavors\MaxMD\Message\Contracts;
+
+class Attachments implements Contracts\IAttachments
 {
     protected $attachments;
 
@@ -18,6 +20,13 @@ class Attachments implements Contracts\IAttachment
     {
         if( null !== $index && $this->attachments->hasKey($index) ) {
             $this->attachments->get()[$index]->download();
+        }
+    }
+
+    public function view($index = null)
+    {
+        if( null !== $index && $this->attachments->hasKey($index) ) {
+            return $this->attachments->get()[$index]->view();
         }
     }
 

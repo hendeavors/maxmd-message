@@ -5,9 +5,14 @@ namespace Endeavors\MaxMD\Message\Tests;
 use Endeavors\MaxMD\Message\User;
 use Endeavors\MaxMD\Message\Message;
 
-class MessageSendTest extends TestCase
+class MailAttachmentSendTest extends \Orchestra\Testbench\TestCase
 {
-    public function testSendingMessageToInsideEmail()
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    public function testSendingMessage()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
@@ -24,7 +29,7 @@ class MessageSendTest extends TestCase
         $this->assertTrue($response->success);
     }
 
-    public function testSendingMessageToValidEmailButInvalidDirectAccount()
+    public function testSendingMessageWithTextFile()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
@@ -33,18 +38,17 @@ class MessageSendTest extends TestCase
             'htmlBody' => true,
             'body' => 'test',
             'recipients' => [[
-                'email' => 'adam@healthendeavors.com',
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
                 'type' => 'TO'
             ]]
-        ])->Send();
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.txt")
+        ->Send();
 
         $this->assertTrue($response->success);
     }
 
-    /**
-     * Message::create defaults to loose
-     */
-    public function testSendingMessageToInvalidEmail()
+    public function testSendingMessageWithXmlFile()
     {
         User::login("freddie@healthendeavors.direct.eval.md", "smith");
 
@@ -53,102 +57,94 @@ class MessageSendTest extends TestCase
             'htmlBody' => true,
             'body' => 'test',
             'recipients' => [[
-                'email' => 'move.',
-                'type' => 'TO'
-            ]]
-        ])->Send();
-
-        $this->assertFalse($response->success);
-    }
-
-    /**
-     * @expectedException RuntimeException
-     */
-    public function testSendingMessageToInvalidEmailInStrictMode()
-    {
-        User::login("freddie@healthendeavors.direct.eval.md", "smith");
-
-        $response = Message::strict([
-            'sender' => 'freddie@healthendeavors.direct.eval.md',
-            'htmlBody' => "true",
-            'body' => 'test',
-            'recipients' => [[
-                'email' => 'move.',
-                'type' => 'TO'
-            ]]
-        ])->Send();
-
-        $this->assertFalse($response->success);
-    }
-
-    /**
-     * Loose mode removes the bad recipients
-     */
-    public function testSendingMessageToInvalidEmailInLooseMode()
-    {
-        User::login("freddie@healthendeavors.direct.eval.md", "smith");
-
-        $response = Message::loose([
-            'sender' => 'freddie@healthendeavors.direct.eval.md',
-            'htmlBody' => "true",
-            'body' => 'test',
-            'recipients' => [[
-                'email' => 'move.',
-                'type' => 'TO'
-            ]]
-        ])->Send();
-
-        $this->assertFalse($response->success);
-    }
-
-    /**
-     * @expectedException RuntimeException
-     */
-    public function testSendingMessageToInvalidEmailAndValidEmailInStrictMode()
-    {
-        User::login("freddie@healthendeavors.direct.eval.md", "smith");
-
-        $response = Message::strict([
-            'sender' => 'freddie@healthendeavors.direct.eval.md',
-            'htmlBody' => true,
-            'body' => 'test',
-            'recipients' => [[
                 'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
                 'type' => 'TO'
-            ],[
-                'email' => 'move.',
-                'type' => 'TO'
             ]]
-        ])->Send();
-
-        $this->assertFalse($response->success);
-    }
-
-    /**
-     * We should have a success response in loose mode with one valid email
-     */
-    public function testSendingMessageToInvalidEmailAndValidEmailInLooseMode()
-    {
-        User::login("freddie@healthendeavors.direct.eval.md", "smith");
-
-        $response = Message::loose([
-            'sender' => 'freddie@healthendeavors.direct.eval.md',
-            'htmlBody' => true,
-            'body' => 'test',
-            'recipients' => [[
-                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
-                'type' => 'TO'
-            ],[
-                'email' => 'invalid.',
-                'type' => 'TO'
-            ]]
-        ])->Send();
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.xml")
+        ->Send();
 
         $this->assertTrue($response->success);
     }
 
-    public function tearDown()
+    public function testSendingMessageWithXmlAndTextFile()
     {
-        parent::tearDown();
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.xml")
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "testfile.txt")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
+    public function testSendingMessageWordDocumentFile()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "maxmdbinarytest.docx")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
+    public function testSendingMessagePngFile()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "somepng.png")
+        ->Send();
+
+        $this->assertTrue($response->success);
+    }
+
+    /**
+     * @expectedException \Endeavors\MaxMD\Message\Exceptions\FileNotFoundException
+     */
+    public function testSendingMessageWithBadFilePath()
+    {
+        User::login("freddie@healthendeavors.direct.eval.md", "smith");
+
+        $response = Message::create([
+            'sender' => 'freddie@healthendeavors.direct.eval.md',
+            'htmlBody' => true,
+            'body' => 'test',
+            'recipients' => [[
+                'email' => 'stevejones1231224@healthendeavors.direct.eval.md',
+                'type' => 'TO'
+            ]]
+        ])
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "badfile.xml")
+        ->addAttachment(__DIR__ . DIRECTORY_SEPARATOR . "badfile.txt")
+        ->Send();
+
+        $this->assertTrue($response->success);
     }
 }
